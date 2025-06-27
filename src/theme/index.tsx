@@ -58,6 +58,11 @@ export const theme = createTheme({
             whiteSpace: "nowrap",
             textOverflow: "ellipsis",
         },
+        caption: {
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+        },
         button: {
             overflow: "hidden",
             whiteSpace: "nowrap",

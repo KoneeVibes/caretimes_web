@@ -12,7 +12,9 @@
         --light-color: #FFFFFF;
         --dark-color: #000000;
         --off-dark-color: #0D0706;
+        --dark-variant-color: #070606;
         --off-primary-color: #8D5245;
+        --off-light-color: #FAFAFA;
         --input-field-text-color: #AAADB4;
         --input-field-border-color: #DCDFE6;
         --form-label-color: #606266;
@@ -20,6 +22,12 @@
         --text-gray-color: #535862;
         --border-primary-color: #DBBDB6;
         --border-off-primary-color: #C99B91;
+        --border-faint-primary-color: #E9EAEB;
+        --subtitle-gray-color: #A4A7AE;
+        --off-gray-color: #4F4F4F;
+        --active-rating-color: #FDB022;
+        --cream-blend-variant-color: #C99B91;
+        --cream-blend-inverse-color: #E4CDC8;
 
         --basic-padding: 4.75rem;
         --basic-margin: 4.75rem;
