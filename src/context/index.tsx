@@ -1,13 +1,23 @@
 import { createContext, useState } from "react";
 import { ContextProviderPropsType, ContextType } from "../type/context.type";
 
-export const Context = createContext({} as ContextType);
+export const AppContext = createContext({} as ContextType);
 
-export const ContextProvider: React.FC<ContextProviderPropsType> = ({ children }) => {
+export const AppContextProvider: React.FC<ContextProviderPropsType> = ({ children }) => {
     const [openMenu, setOpenMenu] = useState(false);
+    const [isAuthenticationMethodSelectionModalOpen, setIsAuthenticationMethodSelectionModalOpen] = useState(true);
+    const [isAuthenticationFormModalOpen, setIsAuthenticationFormModalOpen] = useState({ status: false, index: 0 });
+
     return (
-        <Context.Provider value={{ openMenu, setOpenMenu }}>
+        <AppContext.Provider value={{
+            openMenu,
+            setOpenMenu,
+            isAuthenticationMethodSelectionModalOpen,
+            setIsAuthenticationMethodSelectionModalOpen,
+            isAuthenticationFormModalOpen,
+            setIsAuthenticationFormModalOpen
+        }}>
             {children}
-        </Context.Provider>
+        </AppContext.Provider>
     )
 }

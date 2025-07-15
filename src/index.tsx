@@ -5,7 +5,7 @@ import App from './App';
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ContextProvider } from './context';
+import { AppContextProvider } from './context';
 
 const queryClient = new QueryClient();
 
@@ -14,7 +14,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <ContextProvider>
+    <AppContextProvider>
       <ThemeProvider
         theme={theme}
       >
@@ -24,6 +24,6 @@ root.render(
           <App />
         </QueryClientProvider>
       </ThemeProvider>
-    </ContextProvider>
+    </AppContextProvider>
   </React.StrictMode>
 );

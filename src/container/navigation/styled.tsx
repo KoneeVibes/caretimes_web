@@ -1,9 +1,9 @@
 import { Stack, styled } from "@mui/material";
 import { useContext, useEffect } from "react";
-import { Context } from "../../context";
+import { AppContext } from "../../context";
 
 export const NavigationWrapper = styled(Stack)(({ theme }) => {
-    const { openMenu, setOpenMenu } = useContext(Context);
+    const { openMenu, setOpenMenu } = useContext(AppContext);
 
     useEffect(() => {
         const handleResize = () => {

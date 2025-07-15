@@ -28,6 +28,7 @@
         --active-rating-color: #FDB022;
         --cream-blend-variant-color: #C99B91;
         --cream-blend-inverse-color: #E4CDC8;
+        --close-icon-orange-color: #FA4E04;
 
         --basic-padding: 4.75rem;
         --basic-margin: 4.75rem;
@@ -37,5 +38,29 @@
 
     * {
         /* outline: 1px solid #FF0000; */
+    }
+
+    .loader {
+        width: calc(0.35 * var(--basic-padding)) !important;
+        height: auto !important;
+    }
+
+    .authentication-method-selection-notification-modal .MuiDialog-paper {
+        border-radius: 15px;
+        max-width: 28rem;
+        width: -webkit-fill-available;
+        overflow: hidden;
+    }
+
+    .authentication-form-modal .MuiDialog-paper {
+        border-radius: 0 0 15px 15px;
+        max-width: 29.5rem;
+        max-height: 45rem;
+        width: -webkit-fill-available;
+        overflow: hidden;
+        position: fixed;
+        top: 0;
+        right: 0;
+        margin: 0;
     }
 }
