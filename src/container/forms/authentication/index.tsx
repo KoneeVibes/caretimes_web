@@ -130,6 +130,7 @@ export const AuthenticationFormModal = () => {
                 };
                 break;
         };
+        setIsLoading(false);
         console.log(payload);
     };
 
