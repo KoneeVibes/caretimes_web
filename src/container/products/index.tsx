@@ -1,21 +1,28 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { ProductsWrapper } from "./styled";
 import { Box, Grid, Stack, Typography, useMediaQuery } from "@mui/material";
 import { BaseSelect } from "../../component/form/select/styled";
 import { BaseOption } from "../../component/form/option/styled";
 import { BaseFieldSet } from "../../component/form/fieldset/styled";
 import { ArrowDownward } from "@mui/icons-material";
-import { allProduct, productCategories } from "../../config/static";
 import { BaseLabel } from "../../component/form/label/styled";
 import { BaseInput } from "../../component/form/input/styled";
 import { formatAmountDisplay } from "../../helper/formatAmountDisplay";
 import { BaseButton } from "../../component/button/styled";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { useQuery } from "@tanstack/react-query";
+import Cookies from "universal-cookie";
+import { retrieveAllProductService } from "../../util/product/retrieveAllProduct";
+import { retrieveCategoryByIdService } from "../../util/category/retrieveCategoryById";
+import { retrieveAllCategoryService } from "../../util/category/retrieveAllCategory";
 
 export const Products = () => {
 	const resourceCount = [1, 10, 20];
-	const sortOptions = ["Alphabetically", "Most Recent"];
+	const sortOptions = ["Ascending", "Descending"];
+
+	const cookies = new Cookies();
+	const TOKEN = cookies.getAll().TOKEN;
 
 	// convert this to a state and manage update for price/categories field
 	const isMobile = useMediaQuery("(max-width:426px)");
@@ -37,21 +44,79 @@ export const Products = () => {
 	// and average range (lowerLimit - upperLimit), so this effect will
 	// trigger an update on both setFilters and setFormDetails price items.
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [filters, setFilters] = useState([
 		{
 			name: "Categories",
-			fields: productCategories.map((category) => category.title),
+			fields: [],
 		},
 		{ name: "Availability", fields: ["In Stock", "Out of Stock"] },
 		{ name: "Price", fields: { lowerLimit: 100, upperLimit: 10000 } },
 	]);
 	const [formDetails, setFormDetails] = useState<Record<string, any>>({
 		perPage: "10",
-		sortedBy: "Alphabetically",
+		sortBy: "Ascending",
 		categories: [],
 		availability: [],
 		price: filters?.find((filter) => filter.name === "Price")?.fields,
+	});
+
+	useEffect(() => {
+		if (!TOKEN) return;
+		let mounted = true;
+		(async () => {
+			try {
+				const response = await retrieveAllCategoryService(TOKEN);
+				if (!mounted) return;
+				setFilters((prev) =>
+					prev.map((filter) =>
+						filter.name === "Categories"
+							? {
+									...filter,
+									fields: response.map(
+										(category: Record<string, any>) => category.name
+									),
+							  }
+							: filter
+					)
+				);
+			} catch (error) {
+				console.error("Error fetching categories", error);
+			}
+		})();
+		return () => {
+			mounted = false;
+		};
+	}, [TOKEN]);
+
+	const fetchProductsWithCategories = async (TOKEN: string) => {
+		const allProducts = await retrieveAllProductService(TOKEN, formDetails);
+		const productsWithCategoryNames = await Promise.all(
+			allProducts.map(async (prod: Record<string, any>) => {
+				if (!prod.category) return prod;
+				try {
+					const response = await retrieveCategoryByIdService(
+						TOKEN,
+						prod.category
+					);
+					return {
+						...prod,
+						category: response?.name ?? null,
+					};
+				} catch (error) {
+					console.error(`Error fetching category: ${prod.category}`, error);
+					return {
+						...prod,
+						category: null,
+					};
+				}
+			})
+		);
+		return productsWithCategoryNames;
+	};
+
+	const { data: allProduct } = useQuery({
+		queryKey: ["products-with-categories", formDetails],
+		queryFn: () => fetchProductsWithCategories(TOKEN),
 	});
 
 	const handleChange = (
@@ -199,9 +264,9 @@ export const Products = () => {
 					<BaseFieldSet>
 						<BaseSelect
 							radius="64px"
-							name="sortedBy"
+							name="sortBy"
 							fullWidth={isMobile}
-							value={formDetails.sortedBy}
+							value={formDetails.sortBy}
 							colour="var(--primary-color)"
 							onChange={(e) => handleChange(e)}
 							border="1px solid var(--primary-color)"
@@ -261,6 +326,7 @@ export const Products = () => {
 				</Stack>
 			</Stack>
 			<Stack
+				alignItems={"flex-start"}
 				justifyContent={"space-between"}
 				direction={{ miniTablet: "row" }}
 				gap={{
@@ -268,10 +334,7 @@ export const Products = () => {
 					mobile: "calc(var(--flex-gap)/4)",
 				}}
 			>
-				<Stack
-					gap={"calc(var(--flex-gap)/4)"}
-					minWidth={{ miniTablet: "200px" }}
-				>
+				<Stack gap={"calc(var(--flex-gap)/4)"} width={{ miniTablet: "200px" }}>
 					{filters.map((filter, index) => {
 						return (
 							<Stack key={index} gap={"calc(var(--flex-gap)/4)"}>
@@ -442,7 +505,7 @@ export const Products = () => {
 					})}
 				</Stack>
 				<Grid container component={"div"} spacing={"calc(var(--flex-gap)/4)"}>
-					{allProduct?.map((product, index) => {
+					{allProduct?.map((product: Record<string, any>, index: number) => {
 						return (
 							<Grid
 								key={index}
@@ -451,6 +514,7 @@ export const Products = () => {
 								className="product-grid-item"
 								sx={{
 									flexGrow:
+										allProduct.length > 1 &&
 										allProduct.length % (12 / gridView) !== 0 &&
 										index >=
 											allProduct.length - (allProduct.length % (12 / gridView))
@@ -460,7 +524,7 @@ export const Products = () => {
 							>
 								<Stack className="product-grid-item-body">
 									<Box component={"div"} className="product-thumbnail-box">
-										<img src={product?.thumbnail} alt={product?.name} />
+										<img src={product?.images?.[0]} alt={product?.name} />
 									</Box>
 									<Stack gap={"calc(var(--flex-gap)/8)"}>
 										<Box>
@@ -616,9 +680,9 @@ export const Products = () => {
 				<BaseFieldSet>
 					<BaseSelect
 						radius="64px"
-						name="sortedBy"
+						name="sortBy"
 						fullWidth={isMobile}
-						value={formDetails.sortedBy}
+						value={formDetails.sortBy}
 						colour="var(--primary-color)"
 						onChange={(e) => handleChange(e)}
 						border="1px solid var(--primary-color)"

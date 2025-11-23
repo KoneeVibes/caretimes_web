@@ -54,6 +54,8 @@ export const ProductsWrapper = styled(Stack)(({ theme }) => {
 		"& .product-grid-item": {
 			overflow: "hidden",
 			"& .product-grid-item-body": {
+				justifyContent: "space-between",
+				height: "-webkit-fill-available",
 				padding: "calc(var(--basic-padding)/4)",
 				borderRadius: "12px",
 				gap: "calc(var(--flex-gap)/8)",
@@ -61,7 +63,8 @@ export const ProductsWrapper = styled(Stack)(({ theme }) => {
 				"& .product-thumbnail-box": {
 					"& img": {
 						width: "100%",
-						height: "auto",
+						height: "11.25rem",
+						objectFit: "cover",
 						borderRadius: "10px",
 					},
 				},

@@ -5,11 +5,11 @@ import { Location } from "../../container/location";
 import { Navigation } from "../../container/navigation";
 import { Products } from "../../container/products";
 import { SavedItems } from "../../container/saveditems";
-import { CategoryWrapper } from "./styled";
+import { ProductWrapper } from "./styled";
 
-export const Category = () => {
+export const Product = () => {
 	return (
-		<CategoryWrapper
+		<ProductWrapper
 			maxWidth={false}
 			sx={{
 				padding: "0 !important",
@@ -24,6 +24,6 @@ export const Category = () => {
 			<Banner />
 			<SavedItems />
 			<Footer />
-		</CategoryWrapper>
+		</ProductWrapper>
 	);
 };

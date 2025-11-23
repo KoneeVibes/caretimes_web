@@ -1,6 +1,6 @@
 import { Container, styled } from "@mui/material";
 
-export const CategoryWrapper = styled(Container)(({ theme }) => {
+export const ProductWrapper = styled(Container)(({ theme }) => {
     return {
         overflow: "hidden",
         "& .rfm-marquee-container, & .rfm-marquee": {
