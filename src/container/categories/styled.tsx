@@ -20,7 +20,7 @@ export const CategoriesWrapper = styled(Stack)(({ theme }) => {
         "& .category-thumbnail-box": {
             "& img": {
                 width: "100%",
-                height: "auto",
+                height: "236px",
                 borderRadius: "10px",
             },
         },

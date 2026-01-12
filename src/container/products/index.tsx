@@ -1,6 +1,13 @@
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ProductsWrapper } from "./styled";
-import { Box, Grid, Stack, Typography, useMediaQuery } from "@mui/material";
+import {
+	Box,
+	CircularProgress,
+	Grid,
+	Stack,
+	Typography,
+	useMediaQuery,
+} from "@mui/material";
 import { BaseSelect } from "../../component/form/select/styled";
 import { BaseOption } from "../../component/form/option/styled";
 import { BaseFieldSet } from "../../component/form/fieldset/styled";
@@ -9,13 +16,14 @@ import { BaseLabel } from "../../component/form/label/styled";
 import { BaseInput } from "../../component/form/input/styled";
 import { formatAmountDisplay } from "../../helper/formatAmountDisplay";
 import { BaseButton } from "../../component/button/styled";
-import StarIcon from "@mui/icons-material/Star";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
-import { useQuery } from "@tanstack/react-query";
+// import StarIcon from "@mui/icons-material/Star";
+// import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Cookies from "universal-cookie";
 import { retrieveAllProductService } from "../../util/product/retrieveAllProduct";
 import { retrieveCategoryByIdService } from "../../util/category/retrieveCategoryById";
 import { retrieveAllCategoryService } from "../../util/category/retrieveAllCategory";
+import { addProductService } from "../../util/cart/addProduct";
 
 export const Products = () => {
 	const resourceCount = [1, 10, 20];
@@ -40,17 +48,27 @@ export const Products = () => {
 		? 4
 		: 3;
 
+	const queryClient = useQueryClient();
+
+	const [isLoading, setIsLoading] = useState(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [error, setError] = useState<string | null>(null);
+	const [lastClicked, setlastClicked] = useState<Record<string, any> | null>(
+		null
+	);
 	// the price filter will be re-initialized from a useEffect to return
 	// and average range (lowerLimit - upperLimit), so this effect will
 	// trigger an update on both setFilters and setFormDetails price items.
-
 	const [filters, setFilters] = useState([
 		{
 			name: "Categories",
 			fields: [],
 		},
 		{ name: "Availability", fields: ["In Stock", "Out of Stock"] },
-		{ name: "Price", fields: { lowerLimit: 100, upperLimit: 10000 } },
+		{
+			name: "Price",
+			fields: { lowerLimit: 0, upperLimit: 1000000000000 },
+		},
 	]);
 	const [formDetails, setFormDetails] = useState<Record<string, any>>({
 		perPage: "10",
@@ -60,8 +78,22 @@ export const Products = () => {
 		price: filters?.find((filter) => filter.name === "Price")?.fields,
 	});
 
+	const addToCartMutation = useMutation({
+		mutationFn: (product: Record<string, any>) =>
+			addProductService(TOKEN, product),
+		onSuccess: () => {
+			setIsLoading(false);
+			queryClient.invalidateQueries({
+				queryKey: ["products-in-cart-with-categories", TOKEN],
+			});
+		},
+		onError: (error: any) => {
+			setIsLoading(false);
+			setError(`Add to cart failed. ${error.message}`);
+		},
+	});
+
 	useEffect(() => {
-		if (!TOKEN) return;
 		let mounted = true;
 		(async () => {
 			try {
@@ -160,6 +192,16 @@ export const Products = () => {
 				? prev[name].filter((v: string) => v !== value)
 				: [...prev[name], value],
 		}));
+	};
+
+	const handleAddToCart = (
+		e: React.MouseEvent<HTMLButtonElement>,
+		product: Record<string, any>
+	) => {
+		e.preventDefault();
+		setIsLoading(true);
+		setlastClicked(product);
+		addToCartMutation.mutate(product);
 	};
 
 	return (
@@ -363,11 +405,15 @@ export const Products = () => {
 														onChange={handleChange}
 														name={`price-lower-limit`}
 														inputProps={{
-															min: 0,
-															max:
+															min:
 																typeof filter.fields === "object" &&
 																"lowerLimit" in filter.fields
 																	? filter.fields["lowerLimit"]
+																	: 0,
+															max:
+																typeof filter.fields === "object" &&
+																"upperLimit" in filter.fields
+																	? Number(filter.fields["upperLimit"]) / 2
 																	: 0,
 														}}
 														value={formDetails.price.lowerLimit}
@@ -388,8 +434,8 @@ export const Products = () => {
 														inputProps={{
 															min:
 																typeof filter.fields === "object" &&
-																"lowerLimit" in filter.fields
-																	? filter.fields["lowerLimit"]
+																"upperLimit" in filter.fields
+																	? Number(filter.fields["upperLimit"]) / 2
 																	: 0,
 															max:
 																typeof filter.fields === "object" &&
@@ -554,7 +600,7 @@ export const Products = () => {
 											</Typography>
 										</Box>
 										<Box>
-											<Stack
+											{/* <Stack
 												direction="row"
 												gap={"calc(var(--flex-gap)/32)"}
 												marginBlockEnd={"calc(var(--basic-margin)/16)"}
@@ -579,7 +625,7 @@ export const Products = () => {
 														)}
 													</Fragment>
 												))}
-											</Stack>
+											</Stack> */}
 											<Typography
 												variant="caption"
 												fontFamily={"Inter"}
@@ -599,8 +645,32 @@ export const Products = () => {
 												disableElevation
 												variant="contained"
 												sx={{ width: "100%" }}
+												onClick={(e) =>
+													handleAddToCart(e, {
+														product: product?.id,
+														quantity: 1,
+														price: product?.price,
+													})
+												}
 											>
-												Add to Cart
+												{isLoading && lastClicked?.product === product?.id ? (
+													<CircularProgress
+														color="inherit"
+														className="loader"
+													/>
+												) : (
+													<Typography
+														variant={"button"}
+														fontFamily={"inherit"}
+														fontWeight={"inherit"}
+														fontSize={"inherit"}
+														lineHeight={"inherit"}
+														color={"inherit"}
+														textTransform={"inherit"}
+													>
+														Add to Cart
+													</Typography>
+												)}
 											</BaseButton>
 										</Box>
 									</Stack>

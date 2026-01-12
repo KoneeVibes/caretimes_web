@@ -1,20 +1,99 @@
-import { Box, Grid, Stack, Typography, useMediaQuery } from "@mui/material";
+import {
+	Box,
+	CircularProgress,
+	Grid,
+	Stack,
+	Typography,
+	useMediaQuery,
+} from "@mui/material";
 import { SavedItemsWrapper } from "./styled";
-import { Fragment } from "react/jsx-runtime";
-import StarIcon from "@mui/icons-material/Star";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
+// import StarIcon from "@mui/icons-material/Star";
+// import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { formatAmountDisplay } from "../../helper/formatAmountDisplay";
 import { BaseButton } from "../../component/button/styled";
-import { savedItems } from "../../config/static";
 import { ArrowForward } from "@mui/icons-material";
+import Cookies from "universal-cookie";
+import { retrieveCategoryByIdService } from "../../util/category/retrieveCategoryById";
+import { retrieveAllProductInCartService } from "../../util/cart/retrieveAllProduct";
+import { retrieveProductByIdService } from "../../util/product/retrieveProductById";
+import { useQuery } from "@tanstack/react-query";
+import { deleteProductService } from "../../util/cart/deleteProduct";
+import { useEffect, useState } from "react";
 
 export const SavedItems = () => {
+	const cookies = new Cookies();
+	const TOKEN = cookies.getAll().TOKEN;
+
 	const matches = useMediaQuery("(max-width:250px)");
+
+	const [isLoading, setIsLoading] = useState(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [error, setError] = useState<string | null>(null);
+	const [lastClicked, setlastClicked] = useState<string | null>(null);
+
+	const fetchProductsInCartWithCategories = async (TOKEN: string) => {
+		const allCartItem = await retrieveAllProductInCartService(TOKEN);
+		const productsWithCategoryNames = await Promise.all(
+			allCartItem?.map(async (cart: Record<string, any>) => {
+				try {
+					const product = await retrieveProductByIdService(
+						TOKEN,
+						cart?.productId
+					);
+					const category = await retrieveCategoryByIdService(
+						TOKEN,
+						product.category
+					);
+					return {
+						...product,
+						cartId: cart?.id ?? null,
+						quantity: cart?.quantity ?? 0,
+						category: category?.name ?? null,
+					};
+				} catch (error) {
+					console.error(`Error fetching category`, error);
+				}
+			})
+		);
+		return productsWithCategoryNames;
+	};
+
+	const { data: allProduct, refetch } = useQuery({
+		queryKey: ["products-in-cart-with-categories", TOKEN],
+		queryFn: () => fetchProductsInCartWithCategories(TOKEN),
+	});
+
+	useEffect(() => {
+		refetch();
+	}, [lastClicked, refetch]);
 
 	const handleNavigateToCheckout = (
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
 	) => {
 		e.stopPropagation();
+	};
+
+	const handleRemoveFromCart = async (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+		cartItemId: string
+	) => {
+		e.preventDefault();
+		setError(null);
+		setIsLoading(true);
+		setlastClicked(cartItemId);
+		try {
+			const response = await deleteProductService(TOKEN, cartItemId);
+			if (response.status !== "success") {
+				throw new Error("Action: Remove from cart failed. Please try again.");
+			}
+			// setIsAlertModalOpen(true);
+		} catch (error: any) {
+			setError(`Remove from cart failed. ${error.message}`);
+			console.error("Remove from cart failed:", error);
+		} finally {
+			setIsLoading(false);
+			setlastClicked(null);
+		}
 	};
 
 	return (
@@ -79,20 +158,20 @@ export const SavedItems = () => {
 			<Grid
 				container
 				component={"div"}
-				spacing={"calc(var(--flex-gap)/4)"}
 				justifyContent={"space-between"}
+				spacing={"calc(var(--flex-gap)/4)"}
 			>
-				{savedItems?.slice(0, 5).map((bestSeller, index) => {
+				{allProduct?.map((product, index) => {
 					return (
 						<Grid
 							key={index}
 							component={"div"}
 							className="saved-product-grid-item"
-							size={{ mobile: 12, miniTablet: 6, laptop: 2 }}
+							size={{ mobile: 12, miniTablet: 6, laptop: 2.5 }}
 						>
 							<Stack className="saved-product-grid-item-body">
 								<Box component={"div"} className="saved-product-thumbnail-box">
-									<img src={bestSeller?.thumbnail} alt={bestSeller?.name} />
+									<img src={product?.images?.[0]} alt={product?.name} />
 								</Box>
 								<Stack gap={"calc(var(--flex-gap)/8)"}>
 									<Box>
@@ -107,7 +186,7 @@ export const SavedItems = () => {
 											display={"inline-block"}
 											width={"100%"}
 										>
-											{bestSeller?.category}
+											{product?.category}
 										</Typography>
 										<Typography
 											variant="h3"
@@ -118,11 +197,11 @@ export const SavedItems = () => {
 											whiteSpace={"normal"}
 											color={"var(--off-primary-color)"}
 										>
-											{bestSeller?.name}
+											{product?.name}
 										</Typography>
 									</Box>
 									<Box>
-										<Stack
+										{/* <Stack
 											direction="row"
 											gap={"calc(var(--flex-gap)/32)"}
 											marginBlockEnd={"calc(var(--basic-margin)/16)"}
@@ -130,7 +209,7 @@ export const SavedItems = () => {
 										>
 											{[...Array(5)].map((_, i) => (
 												<Fragment key={i}>
-													{i < bestSeller?.rating ? (
+													{i < product?.rating ? (
 														<StarIcon
 															sx={{
 																color: "var(--active-rating-color)",
@@ -147,7 +226,7 @@ export const SavedItems = () => {
 													)}
 												</Fragment>
 											))}
-										</Stack>
+										</Stack> */}
 										<Typography
 											variant="caption"
 											fontFamily={"Inter"}
@@ -159,7 +238,7 @@ export const SavedItems = () => {
 											display={"inline-block"}
 											width={"100%"}
 										>
-											{`₦${formatAmountDisplay(bestSeller?.price)}`}
+											{`₦${formatAmountDisplay(product?.price)}`}
 										</Typography>
 									</Box>
 									<Box sx={{ display: "flex", overflow: "hidden" }}>
@@ -167,8 +246,23 @@ export const SavedItems = () => {
 											disableElevation
 											variant="contained"
 											sx={{ width: "100%" }}
+											onClick={(e) => handleRemoveFromCart(e, product?.cartId)}
 										>
-											Add to Cart
+											{isLoading && lastClicked === product?.cartId ? (
+												<CircularProgress color="inherit" className="loader" />
+											) : (
+												<Typography
+													variant={"button"}
+													fontFamily={"inherit"}
+													fontWeight={"inherit"}
+													fontSize={"inherit"}
+													lineHeight={"inherit"}
+													color={"inherit"}
+													textTransform={"inherit"}
+												>
+													Remove from Cart ({product?.quantity})
+												</Typography>
+											)}
 										</BaseButton>
 									</Box>
 								</Stack>

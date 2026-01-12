@@ -1,7 +1,7 @@
 import {
 	CartIcon,
 	FacebookIcon,
-	FavouriteIcon,
+	// FavouriteIcon,
 	LinkedInIcon,
 	ProfileIcon,
 	TwitterIcon,
@@ -28,20 +28,8 @@ export const navLinks = [
 		url: "/products",
 	},
 	{
-		name: "Hair care",
-		url: "/haircare",
-	},
-	{
-		name: "Body Care",
-		url: "/bodycare",
-	},
-	{
-		name: "Perfumery",
-		url: "/perfumery",
-	},
-	{
-		name: "Wholesale Store",
-		url: "/wholesalestore",
+		name: "About Us",
+		url: "/about",
 	},
 	{
 		name: "Contact Us",
@@ -54,10 +42,10 @@ export const navCallToActions = [
 		name: "Profile",
 		icon: <ProfileIcon />,
 	},
-	{
-		name: "Favourites",
-		icon: <FavouriteIcon />,
-	},
+	// {
+	// 	name: "Favourites",
+	// 	icon: <FavouriteIcon />,
+	// },
 	{
 		name: "Cart",
 		icon: <CartIcon />,
@@ -254,44 +242,6 @@ export const socialMedia = [
 	},
 ];
 
-export const savedItems = [
-	{
-		name: "Carrot Extract",
-		category: "Body Care",
-		price: 750,
-		rating: 2,
-		thumbnail: babycare,
-	},
-	{
-		name: "Carrot Extract",
-		category: "Body Care",
-		price: 750,
-		rating: 2,
-		thumbnail: babycare,
-	},
-	{
-		name: "Carrot Extract",
-		category: "Body Care",
-		price: 750,
-		rating: 2,
-		thumbnail: babycare,
-	},
-	{
-		name: "Carrot Extract",
-		category: "Body Care",
-		price: 750,
-		rating: 2,
-		thumbnail: babycare,
-	},
-	{
-		name: "Carrot Extract",
-		category: "Body Care",
-		price: 750,
-		rating: 2,
-		thumbnail: babycare,
-	},
-];
-
 export const allProduct = [
 	{
 		name: "Carrot Extract",
@@ -432,5 +382,23 @@ export const allProduct = [
 		price: 750,
 		rating: 2,
 		thumbnail: babycare,
+	},
+];
+
+export const offerings = [
+	{
+		title: "A carefully curated range of cosmetic Products",
+		description:
+			"Understanding your specific requirements and challenges to recommend the most suitable products",
+	},
+	{
+		title: "A carefully curated range of cosmetic Products",
+		description:
+			"Understanding your specific requirements and challenges to recommend the most suitable products",
+	},
+	{
+		title: "A carefully curated range of cosmetic Products",
+		description:
+			"Understanding your specific requirements and challenges to recommend the most suitable products",
 	},
 ];

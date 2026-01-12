@@ -61,9 +61,10 @@ export const ProductsWrapper = styled(Stack)(({ theme }) => {
 				gap: "calc(var(--flex-gap)/8)",
 				border: "1px solid var(--border-faint-primary-color)",
 				"& .product-thumbnail-box": {
+                    height: "11.25rem",
 					"& img": {
 						width: "100%",
-						height: "11.25rem",
+						height: "100%",
 						objectFit: "cover",
 						borderRadius: "10px",
 					},

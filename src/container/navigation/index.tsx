@@ -1,7 +1,7 @@
 import {
 	Box,
 	IconButton,
-	SelectChangeEvent,
+	// SelectChangeEvent,
 	Stack,
 	Typography,
 } from "@mui/material";
@@ -11,11 +11,11 @@ import { useNavigate } from "react-router-dom";
 import { navCallToActions, navLinks } from "../../config/static";
 import { HashLink } from "react-router-hash-link";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { AppContext } from "../../context";
-import { BaseFieldSet } from "../../component/form/fieldset/styled";
-import { BaseInput } from "../../component/form/input/styled";
-import { SearchIcon } from "../../asset";
+// import { BaseFieldSet } from "../../component/form/fieldset/styled";
+// import { BaseInput } from "../../component/form/input/styled";
+// import { SearchIcon } from "../../asset";
 import { BaseNotificationModal } from "../../component/modal/notification";
 import authMethodSelectionThumbnail from "../../asset/image/auth-method-selection-thumbnail.png";
 import { AuthenticationFormModal } from "../forms/authentication";
@@ -25,14 +25,15 @@ export const Navigation = () => {
 	const {
 		openMenu,
 		setOpenMenu,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		isAuthenticationMethodSelectionModalOpen,
 		setIsAuthenticationMethodSelectionModalOpen,
 		setIsAuthenticationFormModalOpen,
 	} = useContext(AppContext);
 
-	const [formDetails, setFormDetails] = useState({
-		productName: "",
-	});
+	// const [formDetails, setFormDetails] = useState({
+	// 	productName: "",
+	// });
 
 	useEffect(() => {
 		if (openMenu) {
@@ -47,17 +48,17 @@ export const Navigation = () => {
 		navigate("/");
 	};
 
-	const handleChange = (
-		e:
-			| React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-			| SelectChangeEvent<unknown>
-	) => {
-		const { name, value } = e.target;
-		setFormDetails((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	};
+	// const handleChange = (
+	// 	e:
+	// 		| React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+	// 		| SelectChangeEvent<unknown>
+	// ) => {
+	// 	const { name, value } = e.target;
+	// 	setFormDetails((prev) => ({
+	// 		...prev,
+	// 		[name]: value,
+	// 	}));
+	// };
 
 	const handleAuthenticationMethodSelectionModalClose = () => {
 		return setIsAuthenticationMethodSelectionModalOpen(false);
@@ -100,7 +101,6 @@ export const Navigation = () => {
 			default:
 				break;
 		}
-		console.log(id);
 	};
 
 	const authMethodSelectionBody = (
@@ -130,7 +130,7 @@ export const Navigation = () => {
 			<BaseNotificationModal
 				className="authentication-method-selection-notification-modal"
 				title="Get started buying today"
-				open={isAuthenticationMethodSelectionModalOpen}
+				open={false} //taken out based on customer request
 				isLoading={false}
 				headerBg={
 					<img
@@ -184,7 +184,7 @@ export const Navigation = () => {
 						);
 					})}
 				</Stack>
-				<Box component={"div"} className="nav-search-field-box">
+				{/* <Box component={"div"} className="nav-search-field-box">
 					<form>
 						<BaseFieldSet>
 							<BaseInput
@@ -203,7 +203,7 @@ export const Navigation = () => {
 							/>
 						</BaseFieldSet>
 					</form>
-				</Box>
+				</Box> */}
 				<Stack className="mobile-nav-call-to-actions">
 					{navCallToActions.map((callToAction, index) => (
 						<Box
