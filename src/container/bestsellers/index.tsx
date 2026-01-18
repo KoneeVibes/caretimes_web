@@ -33,7 +33,7 @@ export const BestSellers = () => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [error, setError] = useState<string | null>(null);
 	const [lastClicked, setlastClicked] = useState<Record<string, any> | null>(
-		null
+		null,
 	);
 
 	const addToCartMutation = useMutation({
@@ -55,7 +55,7 @@ export const BestSellers = () => {
 		let mounted = true;
 		(async () => {
 			try {
-				const response = await retrieveAllCategoryService(TOKEN);
+				const response = await retrieveAllCategoryService();
 				if (!mounted) return;
 				setCategories(response);
 			} catch (error) {
@@ -67,16 +67,13 @@ export const BestSellers = () => {
 		};
 	}, [TOKEN]);
 
-	const fetchProductsWithCategories = async (TOKEN: string) => {
-		const allProducts = await retrieveAllProductService(TOKEN);
+	const fetchProductsWithCategories = async () => {
+		const allProducts = await retrieveAllProductService();
 		const productsWithCategoryNames = await Promise.all(
 			allProducts.map(async (prod: Record<string, any>) => {
 				if (!prod.category) return prod;
 				try {
-					const response = await retrieveCategoryByIdService(
-						TOKEN,
-						prod.category
-					);
+					const response = await retrieveCategoryByIdService(prod.category);
 					return {
 						...prod,
 						category: response?.name ?? null,
@@ -88,14 +85,14 @@ export const BestSellers = () => {
 						category: null,
 					};
 				}
-			})
+			}),
 		);
 		return productsWithCategoryNames;
 	};
 
 	const { data: allProduct } = useQuery({
 		queryKey: ["products-with-categories", TOKEN],
-		queryFn: () => fetchProductsWithCategories(TOKEN),
+		queryFn: () => fetchProductsWithCategories(),
 	});
 
 	const bestSellers = useMemo(() => {
@@ -111,7 +108,7 @@ export const BestSellers = () => {
 	}, [allProduct, categories, activeTabIndex]);
 
 	const handleShowAllClick = (
-		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 	) => {
 		e.stopPropagation();
 		navigate(`/products?filter=best-seller`);
@@ -119,7 +116,7 @@ export const BestSellers = () => {
 
 	const handleTabClick = (
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-		index: number
+		index: number,
 	) => {
 		e.stopPropagation();
 		return setActiveTabIndex(index);
@@ -127,7 +124,7 @@ export const BestSellers = () => {
 
 	const handleAddToCart = (
 		e: React.MouseEvent<HTMLButtonElement>,
-		product: Record<string, any>
+		product: Record<string, any>,
 	) => {
 		e.preventDefault();
 		setIsLoading(true);

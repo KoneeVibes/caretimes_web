@@ -1,20 +1,15 @@
 const BASE_ENDPOINT = process.env.REACT_APP_BASE_API;
 
-export const retrieveCategoryByIdService = async (
-	token: string,
-	id: string
-) => {
+export const retrieveCategoryByIdService = async (id: string) => {
 	try {
 		const response = await fetch(
 			`${BASE_ENDPOINT}/api/v1/customer-interface/category/single/${id}`,
 			{
 				method: "GET",
-				credentials: "include",
 				headers: {
-					Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
 				},
-			}
+			},
 		);
 		const res = await response.json();
 		if (!response.ok) {

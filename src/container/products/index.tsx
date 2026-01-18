@@ -41,12 +41,12 @@ export const Products = () => {
 	const gridView = isMobile
 		? 12
 		: isMiniTablet
-		? 12
-		: isTablet
-		? 6
-		: isLaptop
-		? 4
-		: 3;
+			? 12
+			: isTablet
+				? 6
+				: isLaptop
+					? 4
+					: 3;
 
 	const queryClient = useQueryClient();
 
@@ -54,7 +54,7 @@ export const Products = () => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [error, setError] = useState<string | null>(null);
 	const [lastClicked, setlastClicked] = useState<Record<string, any> | null>(
-		null
+		null,
 	);
 	// the price filter will be re-initialized from a useEffect to return
 	// and average range (lowerLimit - upperLimit), so this effect will
@@ -97,7 +97,7 @@ export const Products = () => {
 		let mounted = true;
 		(async () => {
 			try {
-				const response = await retrieveAllCategoryService(TOKEN);
+				const response = await retrieveAllCategoryService();
 				if (!mounted) return;
 				setFilters((prev) =>
 					prev.map((filter) =>
@@ -105,11 +105,11 @@ export const Products = () => {
 							? {
 									...filter,
 									fields: response.map(
-										(category: Record<string, any>) => category.name
+										(category: Record<string, any>) => category.name,
 									),
-							  }
-							: filter
-					)
+								}
+							: filter,
+					),
 				);
 			} catch (error) {
 				console.error("Error fetching categories", error);
@@ -120,16 +120,13 @@ export const Products = () => {
 		};
 	}, [TOKEN]);
 
-	const fetchProductsWithCategories = async (TOKEN: string) => {
-		const allProducts = await retrieveAllProductService(TOKEN, formDetails);
+	const fetchProductsWithCategories = async () => {
+		const allProducts = await retrieveAllProductService(formDetails);
 		const productsWithCategoryNames = await Promise.all(
 			allProducts.map(async (prod: Record<string, any>) => {
 				if (!prod.category) return prod;
 				try {
-					const response = await retrieveCategoryByIdService(
-						TOKEN,
-						prod.category
-					);
+					const response = await retrieveCategoryByIdService(prod.category);
 					return {
 						...prod,
 						category: response?.name ?? null,
@@ -141,21 +138,21 @@ export const Products = () => {
 						category: null,
 					};
 				}
-			})
+			}),
 		);
 		return productsWithCategoryNames;
 	};
 
 	const { data: allProduct } = useQuery({
 		queryKey: ["products-with-categories", formDetails],
-		queryFn: () => fetchProductsWithCategories(TOKEN),
+		queryFn: () => fetchProductsWithCategories(),
 	});
 
 	const handleChange = (
 		e:
 			| React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 			| React.ChangeEvent<HTMLInputElement>
-			| (Event & {})
+			| (Event & {}),
 	) => {
 		const { name, value } = e.target as HTMLInputElement | HTMLTextAreaElement;
 		setFormDetails((prev) => {
@@ -196,7 +193,7 @@ export const Products = () => {
 
 	const handleAddToCart = (
 		e: React.MouseEvent<HTMLButtonElement>,
-		product: Record<string, any>
+		product: Record<string, any>,
 	) => {
 		e.preventDefault();
 		setIsLoading(true);

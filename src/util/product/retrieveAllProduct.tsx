@@ -1,18 +1,15 @@
 const BASE_ENDPOINT = process.env.REACT_APP_BASE_API;
 
-export const retrieveAllProductService = async (
-	token: string,
-	queryParams?: {
-		perPage?: string;
-		sortBy?: string;
-		categories?: string[];
-		availability?: string[];
-		price?: {
-			lowerLimit: number;
-			upperLimit: number;
-		};
-	}
-) => {
+export const retrieveAllProductService = async (queryParams?: {
+	perPage?: string;
+	sortBy?: string;
+	categories?: string[];
+	availability?: string[];
+	price?: {
+		lowerLimit: number;
+		upperLimit: number;
+	};
+}) => {
 	const params = new URLSearchParams();
 	if (queryParams?.perPage) {
 		params.append("perPage", queryParams.perPage);
@@ -41,12 +38,10 @@ export const retrieveAllProductService = async (
 			`${BASE_ENDPOINT}/api/v1/customer-interface/product/all?${filter}`,
 			{
 				method: "GET",
-				credentials: "include",
 				headers: {
-					Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
 				},
-			}
+			},
 		);
 		const res = await response.json();
 		if (!response.ok) {
