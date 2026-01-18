@@ -38,9 +38,6 @@ export const retrieveAllProductService = async (queryParams?: {
 			`${BASE_ENDPOINT}/api/v1/customer-interface/product/all?${filter}`,
 			{
 				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-				},
 			},
 		);
 		const res = await response.json();

@@ -6,9 +6,6 @@ export const retrieveAllCategoryService = async () => {
 			`${BASE_ENDPOINT}/api/v1/customer-interface/category/all`,
 			{
 				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-				},
 			},
 		);
 		const res = await response.json();

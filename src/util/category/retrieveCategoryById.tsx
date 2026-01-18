@@ -6,9 +6,6 @@ export const retrieveCategoryByIdService = async (id: string) => {
 			`${BASE_ENDPOINT}/api/v1/customer-interface/category/single/${id}`,
 			{
 				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-				},
 			},
 		);
 		const res = await response.json();
