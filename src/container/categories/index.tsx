@@ -19,7 +19,7 @@ export const Categories = () => {
 		let mounted = true;
 		(async () => {
 			try {
-				const response = await retrieveAllCategoryService(TOKEN);
+				const response = await retrieveAllCategoryService();
 				if (!mounted) return;
 				setCategories(response);
 			} catch (error) {

@@ -36,14 +36,8 @@ export const SavedItems = () => {
 		const productsWithCategoryNames = await Promise.all(
 			allCartItem?.map(async (cart: Record<string, any>) => {
 				try {
-					const product = await retrieveProductByIdService(
-						TOKEN,
-						cart?.productId
-					);
-					const category = await retrieveCategoryByIdService(
-						TOKEN,
-						product.category
-					);
+					const product = await retrieveProductByIdService(cart?.productId);
+					const category = await retrieveCategoryByIdService(product.category);
 					return {
 						...product,
 						cartId: cart?.id ?? null,
@@ -53,7 +47,7 @@ export const SavedItems = () => {
 				} catch (error) {
 					console.error(`Error fetching category`, error);
 				}
-			})
+			}),
 		);
 		return productsWithCategoryNames;
 	};
@@ -68,14 +62,14 @@ export const SavedItems = () => {
 	}, [lastClicked, refetch]);
 
 	const handleNavigateToCheckout = (
-		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 	) => {
 		e.stopPropagation();
 	};
 
 	const handleRemoveFromCart = async (
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-		cartItemId: string
+		cartItemId: string,
 	) => {
 		e.preventDefault();
 		setError(null);
