@@ -6,12 +6,11 @@ export const retrieveProductByIdService = async (token: string, id: string) => {
 			`${BASE_ENDPOINT}/api/v1/customer-interface/cart/single/${id}`,
 			{
 				method: "GET",
-				credentials: "include",
 				headers: {
 					Authorization: `Bearer ${token}`,
 					"Content-Type": "application/json",
 				},
-			}
+			},
 		);
 		const res = await response.json();
 		if (!response.ok) {
