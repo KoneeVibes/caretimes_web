@@ -1,20 +1,102 @@
-import { Box, Grid, Stack, Typography, useMediaQuery } from "@mui/material";
+import {
+	Box,
+	CircularProgress,
+	Grid,
+	Stack,
+	Typography,
+	useMediaQuery,
+} from "@mui/material";
 import { FeaturedProductsWrapper } from "./styled";
 import { BaseButton } from "../../component/button/styled";
 import { ArrowForward } from "@mui/icons-material";
-import { bestSellers, featuredProducts } from "../../config/static";
+import { featuredProducts } from "../../config/static";
 import { formatAmountDisplay } from "../../helper/formatAmountDisplay";
 import { useNavigate } from "react-router-dom";
+import { useRequireAuth } from "../../helper/requireAuthentication";
+import Cookies from "universal-cookie";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { addProductService } from "../../util/cart/addProduct";
+import { retrieveAllProductService } from "../../util/product/retrieveAllProduct";
+import { retrieveCategoryByIdService } from "../../util/category/retrieveCategoryById";
 
 export const FeaturedProducts = () => {
+	const cookies = new Cookies();
+	const TOKEN = cookies.getAll().TOKEN;
+
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const { requireAuth } = useRequireAuth();
 	const matches = useMediaQuery("(max-width:250px)");
 
+	const [isLoading, setIsLoading] = useState(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [error, setError] = useState<string | null>(null);
+	const [lastClicked, setlastClicked] = useState<Record<string, any> | null>(
+		null,
+	);
+
+	const { data: bestSellers } = useQuery({
+		queryKey: ["best-sellers", TOKEN],
+		queryFn: async () => {
+			const allProducts = await retrieveAllProductService();
+			const productsWithCategoryNames = await Promise.all(
+				allProducts.map(async (prod: Record<string, any>) => {
+					if (!prod.category) return prod;
+					try {
+						const response = await retrieveCategoryByIdService(prod.category);
+						return {
+							...prod,
+							category: response?.name ?? null,
+						};
+					} catch (error) {
+						console.error(`Error fetching category: ${prod.category}`, error);
+						return {
+							...prod,
+							category: null,
+						};
+					}
+				}),
+			);
+			return (
+				productsWithCategoryNames
+					// include field to check for the highest number of orders in the order table
+					.slice(0, 4)
+			);
+		},
+	});
+
+	const addToCartMutation = useMutation({
+		mutationFn: (product: Record<string, any>) =>
+			addProductService(TOKEN, product),
+		onSuccess: () => {
+			setIsLoading(false);
+			queryClient.invalidateQueries({
+				queryKey: ["products-in-cart-with-categories", TOKEN],
+			});
+		},
+		onError: (error: any) => {
+			setIsLoading(false);
+			setError(`Add to cart failed. ${error.message}`);
+		},
+	});
+
 	const handleBrowseProducts = (
-		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 	) => {
 		e.stopPropagation();
 		navigate(`/products`);
+	};
+
+	const handleAddToCart = (
+		e: React.MouseEvent<HTMLButtonElement>,
+		product: Record<string, any>,
+	) => {
+		e.preventDefault();
+		if (!requireAuth(TOKEN)) return;
+		setIsLoading(true);
+		setlastClicked(product);
+		addToCartMutation.mutate(product);
 	};
 
 	return (
@@ -171,77 +253,107 @@ export const FeaturedProducts = () => {
 					spacing={"calc(var(--flex-gap)/4)"}
 					justifyContent={"space-between"}
 				>
-					{bestSellers?.slice(0, 4).map((bestSeller, index) => {
-						return (
-							<Grid
-								key={index}
-								component={"div"}
-								className="featured-product-grid-item"
-								size={{ mobile: 12, miniTablet: 6, laptop: 2 }}
-							>
-								<Stack className="featured-product-grid-item-body">
-									<Box
-										component={"div"}
-										className="featured-product-thumbnail-box"
-									>
-										<img src={bestSeller?.thumbnail} alt={bestSeller?.name} />
-									</Box>
-									<Stack gap={"calc(var(--flex-gap)/8)"}>
-										<Box>
-											<Typography
-												variant="caption"
-												fontFamily={"Inter"}
-												fontWeight={600}
-												fontSize={12}
-												lineHeight={"normal"}
-												whiteSpace={"normal"}
-												color={"var(--subtitle-gray-color)"}
-												display={"inline-block"}
-												width={"100%"}
-											>
-												{bestSeller?.category}
-											</Typography>
-											<Typography
-												variant="h3"
-												fontFamily={"Inter"}
-												fontWeight={600}
-												fontSize={16}
-												lineHeight={"normal"}
-												whiteSpace={"normal"}
-												color={"var(--off-primary-color)"}
-											>
-												{bestSeller?.name}
-											</Typography>
+					{bestSellers?.map(
+						(bestSeller: Record<string, any>, index: number) => {
+							return (
+								<Grid
+									key={index}
+									component={"div"}
+									className="featured-product-grid-item"
+									size={{ mobile: 12, miniTablet: 6, laptop: 2 }}
+								>
+									<Stack className="featured-product-grid-item-body">
+										<Box
+											component={"div"}
+											className="featured-product-thumbnail-box"
+										>
+											<img
+												src={bestSeller?.images?.[0]}
+												alt={bestSeller?.name}
+											/>
 										</Box>
-										<Box>
-											<Typography
-												variant="caption"
-												fontFamily={"Inter"}
-												fontWeight={600}
-												fontSize={16}
-												lineHeight={"normal"}
-												whiteSpace={"normal"}
-												color={"var(--off-primary-color)"}
-												display={"inline-block"}
-												width={"100%"}
-											>
-												{`₦${formatAmountDisplay(bestSeller?.price)}`}
-											</Typography>
-										</Box>
-										<Box sx={{ display: "flex", overflow: "hidden" }}>
-											<BaseButton
-												disableElevation
-												variant="contained"
-												sx={{ width: "100%" }}
-											>
-												Add to Cart
-											</BaseButton>
-										</Box>
+										<Stack gap={"calc(var(--flex-gap)/8)"}>
+											<Box>
+												<Typography
+													variant="caption"
+													fontFamily={"Inter"}
+													fontWeight={600}
+													fontSize={12}
+													lineHeight={"normal"}
+													whiteSpace={"normal"}
+													color={"var(--subtitle-gray-color)"}
+													display={"inline-block"}
+													width={"100%"}
+												>
+													{bestSeller?.category}
+												</Typography>
+												<Typography
+													variant="h3"
+													fontFamily={"Inter"}
+													fontWeight={600}
+													fontSize={16}
+													lineHeight={"normal"}
+													whiteSpace={"normal"}
+													color={"var(--off-primary-color)"}
+												>
+													{bestSeller?.name}
+												</Typography>
+											</Box>
+											<Box>
+												<Typography
+													variant="caption"
+													fontFamily={"Inter"}
+													fontWeight={600}
+													fontSize={16}
+													lineHeight={"normal"}
+													whiteSpace={"normal"}
+													color={"var(--off-primary-color)"}
+													display={"inline-block"}
+													width={"100%"}
+												>
+													{`₦${formatAmountDisplay(bestSeller?.price)}`}
+												</Typography>
+											</Box>
+											<Box sx={{ display: "flex", overflow: "hidden" }}>
+												<BaseButton
+													disableElevation
+													variant="contained"
+													sx={{ width: "100%" }}
+													onClick={(e) =>
+														handleAddToCart(e, {
+															product: bestSeller?.id,
+															quantity: 1,
+															price: bestSeller?.price,
+														})
+													}
+												>
+													{isLoading &&
+													lastClicked?.product === bestSeller?.id ? (
+														<CircularProgress
+															color="inherit"
+															className="loader"
+														/>
+													) : (
+														<Typography
+															variant={"button"}
+															fontFamily={"inherit"}
+															fontWeight={"inherit"}
+															fontSize={"inherit"}
+															lineHeight={"inherit"}
+															color={"inherit"}
+															textTransform={"inherit"}
+														>
+															Add to Cart
+														</Typography>
+													)}
+												</BaseButton>
+											</Box>
+										</Stack>
 									</Stack>
-								</Stack>
-							</Grid>
-						);
-					})}
+								</Grid>
+							);
+						},
+					)}
 				</Grid>
 				<Box
 					component={"div"}

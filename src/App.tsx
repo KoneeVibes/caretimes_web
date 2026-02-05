@@ -4,6 +4,7 @@ import { Home } from "./page/home";
 import { Product } from "./page/product";
 import { About } from "./page/about";
 import { Contact } from "./page/contact";
+import { Checkout } from "./page/checkout";
 
 function App() {
 	return (
@@ -13,6 +14,7 @@ function App() {
 				<Route path="/products" element={<Product />} />
 				<Route path="/about" element={<About />} />
 				<Route path="/contact" element={<Contact />} />
+				<Route path="/checkout" element={<Checkout />} />
 			</Routes>
 		</BrowserRouter>
 	);

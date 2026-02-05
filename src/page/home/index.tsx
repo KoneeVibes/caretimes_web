@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { BaseMarquee } from "../../component/marquee";
 import { Banner } from "../../container/banner";
 import { BestSellers } from "../../container/bestsellers";
@@ -11,25 +12,26 @@ import { Testimonial } from "../../container/testimonial";
 import { HomeWrapper } from "./styled";
 
 export const Home = () => {
-    return (
-        <HomeWrapper
-            maxWidth={false}
-            sx={{
-                padding: "0 !important",
-            }}
-        >
-            <BaseMarquee
-                items={[<Location />]}
-                background="var(--marquee-bg-color)"
-            />
-            <Navigation />
-            <Hero />
-            <Categories />
-            <BestSellers />
-            <Banner />
-            <FeaturedProducts />
-            <Testimonial />
-            <Footer />
-        </HomeWrapper>
-    )
-}
+	const categoryRef = useRef<HTMLDivElement>(null);
+	return (
+		<HomeWrapper
+			maxWidth={false}
+			sx={{
+				padding: "0 !important",
+			}}
+		>
+			<BaseMarquee
+				items={[<Location />]}
+				background="var(--marquee-bg-color)"
+			/>
+			<Navigation />
+			<Hero categoryRef={categoryRef} />
+			<Categories categoryRef={categoryRef} />
+			<BestSellers />
+			<Banner />
+			<FeaturedProducts />
+			<Testimonial />
+			<Footer />
+		</HomeWrapper>
+	);
+};

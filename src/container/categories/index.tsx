@@ -6,8 +6,9 @@ import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import { useEffect, useMemo, useState } from "react";
 import Cookies from "universal-cookie";
 import { retrieveAllCategoryService } from "../../util/category/retrieveAllCategory";
+import { CategoryRef } from "../../type/container.type";
 
-export const Categories = () => {
+export const Categories: React.FC<CategoryRef> = ({ categoryRef }) => {
 	const maxCategoriesPerSet = 5;
 
 	const cookies = new Cookies();
@@ -41,7 +42,7 @@ export const Categories = () => {
 	}, [categories]);
 
 	return (
-		<CategoriesWrapper>
+		<CategoriesWrapper id="categories" ref={categoryRef}>
 			<Box>
 				<Typography
 					variant="subtitle1"
@@ -176,7 +177,7 @@ export const Categories = () => {
 												</Typography>
 											</Box>
 										</Grid>
-									)
+									),
 								)}
 							</Grid>
 						);

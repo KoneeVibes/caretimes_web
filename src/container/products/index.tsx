@@ -24,6 +24,7 @@ import { retrieveAllProductService } from "../../util/product/retrieveAllProduct
 import { retrieveCategoryByIdService } from "../../util/category/retrieveCategoryById";
 import { retrieveAllCategoryService } from "../../util/category/retrieveAllCategory";
 import { addProductService } from "../../util/cart/addProduct";
+import { useRequireAuth } from "../../helper/requireAuthentication";
 
 export const Products = () => {
 	const resourceCount = [1, 10, 20];
@@ -49,6 +50,7 @@ export const Products = () => {
 					: 3;
 
 	const queryClient = useQueryClient();
+	const { requireAuth } = useRequireAuth();
 
 	const [isLoading, setIsLoading] = useState(false);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -196,6 +198,7 @@ export const Products = () => {
 		product: Record<string, any>,
 	) => {
 		e.preventDefault();
+		if (!requireAuth(TOKEN)) return;
 		setIsLoading(true);
 		setlastClicked(product);
 		addToCartMutation.mutate(product);

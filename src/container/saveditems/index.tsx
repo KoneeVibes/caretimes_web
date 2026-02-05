@@ -19,11 +19,13 @@ import { retrieveProductByIdService } from "../../util/product/retrieveProductBy
 import { useQuery } from "@tanstack/react-query";
 import { deleteProductService } from "../../util/cart/deleteProduct";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const SavedItems = () => {
 	const cookies = new Cookies();
 	const TOKEN = cookies.getAll().TOKEN;
 
+	const navigate = useNavigate();
 	const matches = useMediaQuery("(max-width:250px)");
 
 	const [isLoading, setIsLoading] = useState(false);
@@ -65,6 +67,7 @@ export const SavedItems = () => {
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 	) => {
 		e.stopPropagation();
+		return navigate("/checkout");
 	};
 
 	const handleRemoveFromCart = async (

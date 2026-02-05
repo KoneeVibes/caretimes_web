@@ -66,7 +66,7 @@ export const Navigation = () => {
 
 	const handleAuthenticationMethodSelection = (
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-		id: string
+		id: string,
 	) => {
 		e.stopPropagation();
 		e.preventDefault();
@@ -87,7 +87,7 @@ export const Navigation = () => {
 
 	const handleCallToActionClick = (
 		e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-		id: string
+		id: string,
 	) => {
 		e.stopPropagation();
 		switch (id) {
@@ -97,6 +97,7 @@ export const Navigation = () => {
 			case "Favourites":
 				break;
 			case "Cart":
+				navigate("/checkout");
 				break;
 			default:
 				break;

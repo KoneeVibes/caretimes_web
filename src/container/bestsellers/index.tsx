@@ -18,6 +18,7 @@ import { retrieveCategoryByIdService } from "../../util/category/retrieveCategor
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { addProductService } from "../../util/cart/addProduct";
+import { useRequireAuth } from "../../helper/requireAuthentication";
 
 export const BestSellers = () => {
 	const cookies = new Cookies();
@@ -25,6 +26,7 @@ export const BestSellers = () => {
 
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const { requireAuth } = useRequireAuth();
 	const matches = useMediaQuery("(max-width:250px)");
 
 	const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
@@ -127,6 +129,7 @@ export const BestSellers = () => {
 		product: Record<string, any>,
 	) => {
 		e.preventDefault();
+		if (!requireAuth(TOKEN)) return;
 		setIsLoading(true);
 		setlastClicked(product);
 		addToCartMutation.mutate(product);
