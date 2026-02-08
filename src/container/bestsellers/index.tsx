@@ -72,7 +72,7 @@ export const BestSellers = () => {
 	const fetchProductsWithCategories = async () => {
 		const allProducts = await retrieveAllProductService();
 		const productsWithCategoryNames = await Promise.all(
-			allProducts.map(async (prod: Record<string, any>) => {
+			allProducts?.data.map(async (prod: Record<string, any>) => {
 				if (!prod.category) return prod;
 				try {
 					const response = await retrieveCategoryByIdService(prod.category);

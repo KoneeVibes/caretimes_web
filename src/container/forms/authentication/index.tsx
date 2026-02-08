@@ -50,7 +50,7 @@ export const AuthenticationFormModal = () => {
 	const [formDetails, setFormDetails] = useState(initialFormDetails);
 
 	const handleNavigateToPreviousIndex = (
-		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 	) => {
 		e.stopPropagation();
 		setIsAuthenticationFormModalOpen((prev) => ({
@@ -69,7 +69,7 @@ export const AuthenticationFormModal = () => {
 		e:
 			| React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 			| React.ChangeEvent<HTMLInputElement>
-			| (Event & {})
+			| (Event & {}),
 	) => {
 		const { name, value } = e.target as HTMLInputElement | HTMLTextAreaElement;
 		setFormDetails((prev) => ({
@@ -80,7 +80,7 @@ export const AuthenticationFormModal = () => {
 
 	const handleAlternativeCTAClick = (
 		e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-		index: number
+		index: number,
 	) => {
 		e.stopPropagation();
 		setError(null);
@@ -125,7 +125,7 @@ export const AuthenticationFormModal = () => {
 			} else {
 				setIsLoading(false);
 				setError(
-					"Sign-up failed. Please check your credentials and try again."
+					"Sign-up failed. Please check your credentials and try again.",
 				);
 			}
 		} catch (error: any) {
@@ -151,7 +151,7 @@ export const AuthenticationFormModal = () => {
 			} else {
 				setIsLoading(false);
 				setError(
-					"Sign-in failed. Please check your credentials and try again."
+					"Sign-in failed. Please check your credentials and try again.",
 				);
 			}
 		} catch (error: any) {
@@ -170,7 +170,7 @@ export const AuthenticationFormModal = () => {
 			} else {
 				setIsLoading(false);
 				setError(
-					"Password verification OTP sending failed. Please check your credentials and try again."
+					"Password verification OTP sending failed. Please check your credentials and try again.",
 				);
 			}
 		} catch (error: any) {
@@ -206,7 +206,7 @@ export const AuthenticationFormModal = () => {
 			} else {
 				setIsLoading(false);
 				setError(
-					"Password reset failed. Please check your credentials and try again."
+					"Password reset failed. Please check your credentials and try again.",
 				);
 			}
 		} catch (error: any) {
@@ -217,7 +217,7 @@ export const AuthenticationFormModal = () => {
 	};
 
 	const handleAuthenticationFormSubmit = async (
-		e: React.FormEvent<HTMLFormElement>
+		e: React.FormEvent<HTMLFormElement>,
 	) => {
 		e.preventDefault();
 		let payload = null;
@@ -329,12 +329,12 @@ export const AuthenticationFormModal = () => {
 						{isAuthenticationFormModalOpen.index === 0
 							? "Create your Caretimes Account"
 							: isAuthenticationFormModalOpen.index === 1
-							? "Welcome back!"
-							: isAuthenticationFormModalOpen.index === 2
-							? "Recover Account"
-							: isAuthenticationFormModalOpen.index === 3
-							? "Enter OTP"
-							: "Create New Password"}
+								? "Welcome back!"
+								: isAuthenticationFormModalOpen.index === 2
+									? "Recover Account"
+									: isAuthenticationFormModalOpen.index === 3
+										? "Enter OTP"
+										: "Create New Password"}
 					</Typography>
 					{isAuthenticationFormModalOpen.index !== 4 && (
 						<Typography
@@ -350,9 +350,9 @@ export const AuthenticationFormModal = () => {
 							{isAuthenticationFormModalOpen.index === 0
 								? "Already have an account?"
 								: isAuthenticationFormModalOpen.index === 1 ||
-								  isAuthenticationFormModalOpen.index === 2
-								? "Don’t have an account?"
-								: `Enter 4-digit pin that has been sent to your email.`}
+									  isAuthenticationFormModalOpen.index === 2
+									? "Don’t have an account?"
+									: `Enter 4-digit pin that has been sent to your email.`}
 							<Typography
 								component={"span"}
 								fontFamily={"inherit"}
@@ -364,16 +364,16 @@ export const AuthenticationFormModal = () => {
 								onClick={(e) =>
 									handleAlternativeCTAClick(
 										e,
-										parseFloat(isAuthenticationFormModalOpen.index + ".0")
+										parseFloat(isAuthenticationFormModalOpen.index + ".0"),
 									)
 								}
 							>
 								{isAuthenticationFormModalOpen.index === 0
 									? " Log In"
 									: isAuthenticationFormModalOpen.index === 1 ||
-									  isAuthenticationFormModalOpen.index === 2
-									? " Create Account"
-									: " Click here "}
+										  isAuthenticationFormModalOpen.index === 2
+										? " Create Account"
+										: " Click here "}
 							</Typography>
 							{isAuthenticationFormModalOpen.index === 3 && (
 								<Typography
@@ -494,7 +494,7 @@ export const AuthenticationFormModal = () => {
 									onClick={(e) =>
 										handleAlternativeCTAClick(
 											e,
-											parseFloat(isAuthenticationFormModalOpen.index + ".1")
+											parseFloat(isAuthenticationFormModalOpen.index + ".1"),
 										)
 									}
 								>
@@ -526,7 +526,7 @@ export const AuthenticationFormModal = () => {
 									onClick={(e) =>
 										handleAlternativeCTAClick(
 											e,
-											parseFloat(isAuthenticationFormModalOpen.index + ".1")
+											parseFloat(isAuthenticationFormModalOpen.index + ".1"),
 										)
 									}
 								>
@@ -591,11 +591,11 @@ export const AuthenticationFormModal = () => {
 								{isAuthenticationFormModalOpen.index === 0
 									? "Create an account "
 									: isAuthenticationFormModalOpen.index === 1
-									? "Login"
-									: isAuthenticationFormModalOpen.index === 2 ||
-									  isAuthenticationFormModalOpen.index === 3
-									? "Proceed"
-									: "Done"}
+										? "Login"
+										: isAuthenticationFormModalOpen.index === 2 ||
+											  isAuthenticationFormModalOpen.index === 3
+											? "Proceed"
+											: "Done"}
 							</Typography>
 						)}
 					</BaseButton>
@@ -624,7 +624,7 @@ export const AuthenticationFormModal = () => {
 								onClick={(e) =>
 									handleAlternativeCTAClick(
 										e,
-										parseFloat(isAuthenticationFormModalOpen.index + ".1")
+										parseFloat(isAuthenticationFormModalOpen.index + ".1"),
 									)
 								}
 							>

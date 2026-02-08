@@ -25,6 +25,8 @@ import { retrieveCategoryByIdService } from "../../util/category/retrieveCategor
 import { retrieveAllCategoryService } from "../../util/category/retrieveAllCategory";
 import { addProductService } from "../../util/cart/addProduct";
 import { useRequireAuth } from "../../helper/requireAuthentication";
+import { ArrowForward, ArrowBack } from "@mui/icons-material";
+import { useSearchParams } from "react-router-dom";
 
 export const Products = () => {
 	const resourceCount = [1, 10, 20];
@@ -32,6 +34,9 @@ export const Products = () => {
 
 	const cookies = new Cookies();
 	const TOKEN = cookies.getAll().TOKEN;
+
+	const [params] = useSearchParams();
+	const matches = useMediaQuery("(max-width:250px)");
 
 	// convert this to a state and manage update for price/categories field
 	const isMobile = useMediaQuery("(max-width:426px)");
@@ -73,7 +78,10 @@ export const Products = () => {
 		},
 	]);
 	const [formDetails, setFormDetails] = useState<Record<string, any>>({
+		page: "1",
 		perPage: "10",
+		totalPages: "1",
+		sortParam: "price",
 		sortBy: "Ascending",
 		categories: [],
 		availability: [],
@@ -94,6 +102,72 @@ export const Products = () => {
 			setError(`Add to cart failed. ${error.message}`);
 		},
 	});
+
+	const fetchProductsWithCategories = async () => {
+		const allProducts = await retrieveAllProductService(formDetails);
+		const productsWithCategoryNames = await Promise.all(
+			allProducts.data.map(async (prod: Record<string, any>) => {
+				if (!prod.category) return prod;
+				try {
+					const response = await retrieveCategoryByIdService(prod.category);
+					return {
+						...prod,
+						category: response?.name ?? null,
+					};
+				} catch {
+					return {
+						...prod,
+						category: null,
+					};
+				}
+			}),
+		);
+		return {
+			products: productsWithCategoryNames,
+			meta: allProducts.meta,
+		};
+	};
+
+	const { data: allProduct } = useQuery({
+		queryKey: ["products-with-categories", formDetails],
+		queryFn: () => fetchProductsWithCategories(),
+	});
+
+	const { data, isFetching } = useQuery({
+		queryKey: [
+			"products-with-categories",
+			formDetails.page,
+			formDetails.perPage,
+			formDetails.sortParam,
+			formDetails.sortBy,
+			formDetails.categories,
+			formDetails.availability,
+		],
+		queryFn: fetchProductsWithCategories,
+		placeholderData: (previousData) => previousData,
+	});
+
+	useEffect(() => {
+		if (data?.meta?.totalPages) {
+			setFormDetails((prev) => ({
+				...prev,
+				totalPages: String(data.meta.totalPages),
+			}));
+		}
+	}, [data]);
+
+	useEffect(() => {
+		const filter = params.get("filter");
+		const category = params.get("category");
+		setFormDetails((prev) => ({
+			...prev,
+			sortParam: filter ?? prev.sortParam,
+			categories: category
+				? Array.from(new Set([...prev.categories, ...category.split(",")]))
+				: prev.categories,
+			page: "1",
+		}));
+	}, [params]);
 
 	useEffect(() => {
 		let mounted = true;
@@ -121,34 +195,6 @@ export const Products = () => {
 			mounted = false;
 		};
 	}, [TOKEN]);
-
-	const fetchProductsWithCategories = async () => {
-		const allProducts = await retrieveAllProductService(formDetails);
-		const productsWithCategoryNames = await Promise.all(
-			allProducts.map(async (prod: Record<string, any>) => {
-				if (!prod.category) return prod;
-				try {
-					const response = await retrieveCategoryByIdService(prod.category);
-					return {
-						...prod,
-						category: response?.name ?? null,
-					};
-				} catch (error) {
-					console.error(`Error fetching category: ${prod.category}`, error);
-					return {
-						...prod,
-						category: null,
-					};
-				}
-			}),
-		);
-		return productsWithCategoryNames;
-	};
-
-	const { data: allProduct } = useQuery({
-		queryKey: ["products-with-categories", formDetails],
-		queryFn: () => fetchProductsWithCategories(),
-	});
 
 	const handleChange = (
 		e:
@@ -202,6 +248,24 @@ export const Products = () => {
 		setIsLoading(true);
 		setlastClicked(product);
 		addToCartMutation.mutate(product);
+	};
+
+	const handlePagination = (
+		e: React.MouseEvent<HTMLButtonElement>,
+		direction: "prev" | "next",
+	) => {
+		e.preventDefault();
+		setFormDetails((prev) => {
+			const currentPage = parseInt(prev.page, 10);
+			const newPage =
+				direction === "prev"
+					? Math.max(1, currentPage - 1)
+					: Math.min(parseInt(prev.totalPages, 10), currentPage + 1);
+			return {
+				...prev,
+				page: newPage.toString(),
+			};
+		});
 	};
 
 	return (
@@ -551,56 +615,58 @@ export const Products = () => {
 					})}
 				</Stack>
 				<Grid container component={"div"} spacing={"calc(var(--flex-gap)/4)"}>
-					{allProduct?.map((product: Record<string, any>, index: number) => {
-						return (
-							<Grid
-								key={index}
-								size={gridView}
-								component={"div"}
-								className="product-grid-item"
-								sx={{
-									flexGrow:
-										allProduct.length > 1 &&
-										allProduct.length % (12 / gridView) !== 0 &&
-										index >=
-											allProduct.length - (allProduct.length % (12 / gridView))
-											? "0 !important"
-											: "1 !important",
-								}}
-							>
-								<Stack className="product-grid-item-body">
-									<Box component={"div"} className="product-thumbnail-box">
-										<img src={product?.images?.[0]} alt={product?.name} />
-									</Box>
-									<Stack gap={"calc(var(--flex-gap)/8)"}>
-										<Box>
-											<Typography
-												variant="caption"
-												fontFamily={"Inter"}
-												fontWeight={600}
-												fontSize={12}
-												lineHeight={"normal"}
-												whiteSpace={"normal"}
-												color={"var(--subtitle-gray-color)"}
-												display={"inline-block"}
-												width={"100%"}
-											>
-												{product?.category}
-											</Typography>
-											<Typography
-												variant="h3"
-												fontFamily={"Inter"}
-												fontWeight={600}
-												fontSize={16}
-												lineHeight={"normal"}
-												whiteSpace={"normal"}
-												color={"var(--off-primary-color)"}
-											>
-												{product?.name}
-											</Typography>
+					{allProduct?.products.map(
+						(product: Record<string, any>, index: number) => {
+							return (
+								<Grid
+									key={index}
+									size={gridView}
+									component={"div"}
+									className="product-grid-item"
+									sx={{
+										flexGrow:
+											allProduct.products.length > 1 &&
+											allProduct.products.length % (12 / gridView) !== 0 &&
+											index >=
+												allProduct.products.length -
+													(allProduct.products.length % (12 / gridView))
+												? "0 !important"
+												: "1 !important",
+									}}
+								>
+									<Stack className="product-grid-item-body">
+										<Box component={"div"} className="product-thumbnail-box">
+											<img src={product?.images?.[0]} alt={product?.name} />
 										</Box>
-										<Box>
-											{/* <Stack
+										<Stack gap={"calc(var(--flex-gap)/8)"}>
+											<Box>
+												<Typography
+													variant="caption"
+													fontFamily={"Inter"}
+													fontWeight={600}
+													fontSize={12}
+													lineHeight={"normal"}
+													whiteSpace={"normal"}
+													color={"var(--subtitle-gray-color)"}
+													display={"inline-block"}
+													width={"100%"}
+												>
+													{product?.category}
+												</Typography>
+												<Typography
+													variant="h3"
+													fontFamily={"Inter"}
+													fontWeight={600}
+													fontSize={16}
+													lineHeight={"normal"}
+													whiteSpace={"normal"}
+													color={"var(--off-primary-color)"}
+												>
+													{product?.name}
+												</Typography>
+											</Box>
+											<Box>
+												{/* <Stack
 												direction="row"
 												gap={"calc(var(--flex-gap)/32)"}
 												marginBlockEnd={"calc(var(--basic-margin)/16)"}
@@ -626,58 +692,59 @@ export const Products = () => {
 													</Fragment>
 												))}
 											</Stack> */}
-											<Typography
-												variant="caption"
-												fontFamily={"Inter"}
-												fontWeight={600}
-												fontSize={16}
-												lineHeight={"normal"}
-												whiteSpace={"normal"}
-												color={"var(--off-primary-color)"}
-												display={"inline-block"}
-												width={"100%"}
-											>
-												{`₦${formatAmountDisplay(product?.price)}`}
-											</Typography>
-										</Box>
-										<Box sx={{ display: "flex", overflow: "hidden" }}>
-											<BaseButton
-												disableElevation
-												variant="contained"
-												sx={{ width: "100%" }}
-												onClick={(e) =>
-													handleAddToCart(e, {
-														product: product?.id,
-														quantity: 1,
-														price: product?.price,
-													})
-												}
-											>
-												{isLoading && lastClicked?.product === product?.id ? (
-													<CircularProgress
-														color="inherit"
-														className="loader"
-													/>
-												) : (
-													<Typography
-														variant={"button"}
-														fontFamily={"inherit"}
-														fontWeight={"inherit"}
-														fontSize={"inherit"}
-														lineHeight={"inherit"}
-														color={"inherit"}
-														textTransform={"inherit"}
-													>
-														Add to Cart
-													</Typography>
-												)}
-											</BaseButton>
-										</Box>
+												<Typography
+													variant="caption"
+													fontFamily={"Inter"}
+													fontWeight={600}
+													fontSize={16}
+													lineHeight={"normal"}
+													whiteSpace={"normal"}
+													color={"var(--off-primary-color)"}
+													display={"inline-block"}
+													width={"100%"}
+												>
+													{`₦${formatAmountDisplay(product?.price)}`}
+												</Typography>
+											</Box>
+											<Box sx={{ display: "flex", overflow: "hidden" }}>
+												<BaseButton
+													disableElevation
+													variant="contained"
+													sx={{ width: "100%" }}
+													onClick={(e) =>
+														handleAddToCart(e, {
+															product: product?.id,
+															quantity: 1,
+															price: product?.price,
+														})
+													}
+												>
+													{isLoading && lastClicked?.product === product?.id ? (
+														<CircularProgress
+															color="inherit"
+															className="loader"
+														/>
+													) : (
+														<Typography
+															variant={"button"}
+															fontFamily={"inherit"}
+															fontWeight={"inherit"}
+															fontSize={"inherit"}
+															lineHeight={"inherit"}
+															color={"inherit"}
+															textTransform={"inherit"}
+														>
+															Add to Cart
+														</Typography>
+													)}
+												</BaseButton>
+											</Box>
+										</Stack>
 									</Stack>
-								</Stack>
-							</Grid>
-						);
-					})}
+								</Grid>
+							);
+						},
+					)}
 				</Grid>
 			</Stack>
 			<Stack
@@ -685,130 +752,56 @@ export const Products = () => {
 				direction={{ miniTablet: "row" }}
 				justifyContent={{ miniTablet: "flex-end" }}
 			>
-				<BaseFieldSet>
-					<BaseSelect
+				<Box overflow={"hidden"}>
+					<BaseButton
 						radius="64px"
-						name="perPage"
-						fullWidth={isMobile}
-						value={formDetails.perPage}
+						variant="outlined"
+						disabled={parseInt(formDetails.page, 10) === 1 || isFetching}
+						onClick={(e) => handlePagination(e, "prev")}
+						endIcon={<ArrowBack />}
 						colour="var(--primary-color)"
-						onChange={(e) => handleChange(e)}
-						border="1px solid var(--primary-color)"
 						sx={{
-							maxWidth: "10.4rem",
-							"& .MuiSelect-icon": {
-								display: "none",
-							},
-							"& .MuiOutlinedInput-input": {
-								display: "flex",
-								alignItems: "center",
-								gap: "calc(var(--flex-gap)/8)",
-								paddingRight: "0 !important",
-							},
+							width: matches ? "100%" : "auto",
 						}}
 					>
-						{resourceCount?.map((count: number, index: number) => (
-							<BaseOption
-								key={index}
-								value={count}
-								sx={{
-									display: "flex",
-									maxWidth: "10.4rem",
-									alignItems: "center",
-									gap: "calc(var(--flex-gap)/8)",
-									justifyContent: "space-between",
-								}}
-							>
-								<Typography
-									component={"span"}
-									fontFamily={"inherit"}
-									fontWeight={"inherit"}
-									fontSize={"inherit"}
-									lineHeight={"inherit"}
-									color={"inherit"}
-									textTransform={"inherit"}
-									flex={0.8}
-								>
-									{count} Entrie(s) Per Page{" "}
-								</Typography>
-								<Typography
-									component={"span"}
-									fontFamily={"inherit"}
-									fontWeight={"inherit"}
-									fontSize={"inherit"}
-									lineHeight={"inherit"}
-									color={"inherit"}
-									textTransform={"inherit"}
-									flex={0.2}
-								>
-									<ArrowDownward />
-								</Typography>
-							</BaseOption>
-						))}
-					</BaseSelect>
-				</BaseFieldSet>
-				<BaseFieldSet>
-					<BaseSelect
+						<Typography
+							variant={"button"}
+							fontFamily={"inherit"}
+							fontWeight={"inherit"}
+							fontSize={"inherit"}
+							lineHeight={"inherit"}
+							color={"inherit"}
+							textTransform={"inherit"}
+						>
+							Previous
+						</Typography>
+					</BaseButton>
+				</Box>
+				<Box overflow={"hidden"}>
+					<BaseButton
 						radius="64px"
-						name="sortBy"
-						fullWidth={isMobile}
-						value={formDetails.sortBy}
+						variant="outlined"
+						onClick={(e) => handlePagination(e, "next")}
+						disabled={formDetails.page === formDetails.totalPages || isFetching}
+						endIcon={<ArrowForward />}
 						colour="var(--primary-color)"
-						onChange={(e) => handleChange(e)}
-						border="1px solid var(--primary-color)"
 						sx={{
-							maxWidth: "10.4rem",
-							"& .MuiSelect-icon": {
-								display: "none",
-							},
-							"& .MuiOutlinedInput-input": {
-								display: "flex",
-								alignItems: "center",
-								gap: "calc(var(--flex-gap)/8)",
-								paddingRight: "0 !important",
-							},
+							width: matches ? "100%" : "auto",
 						}}
 					>
-						{sortOptions?.map((option: string, index: number) => (
-							<BaseOption
-								key={index}
-								value={option}
-								sx={{
-									display: "flex",
-									maxWidth: "10.4rem",
-									alignItems: "center",
-									gap: "calc(var(--flex-gap)/8)",
-									justifyContent: "space-between",
-								}}
-							>
-								<Typography
-									component={"span"}
-									fontFamily={"inherit"}
-									fontWeight={"inherit"}
-									fontSize={"inherit"}
-									lineHeight={"inherit"}
-									color={"inherit"}
-									textTransform={"inherit"}
-									flex={0.8}
-								>
-									Sorting {option}{" "}
-								</Typography>
-								<Typography
-									component={"span"}
-									fontFamily={"inherit"}
-									fontWeight={"inherit"}
-									fontSize={"inherit"}
-									lineHeight={"inherit"}
-									color={"inherit"}
-									textTransform={"inherit"}
-									flex={0.2}
-								>
-									<ArrowDownward />
-								</Typography>
-							</BaseOption>
-						))}
-					</BaseSelect>
-				</BaseFieldSet>
+						<Typography
+							variant={"button"}
+							fontFamily={"inherit"}
+							fontWeight={"inherit"}
+							fontSize={"inherit"}
+							lineHeight={"inherit"}
+							color={"inherit"}
+							textTransform={"inherit"}
+						>
+							Next
+						</Typography>
+					</BaseButton>
+				</Box>
 			</Stack>
 		</ProductsWrapper>
 	);

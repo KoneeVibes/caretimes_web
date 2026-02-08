@@ -109,24 +109,28 @@ export const featuredProducts = [
 		description:
 			"Freshly made from harvested coconut with the best nutrients for your skin",
 		thumbnail: coconutbodylotion,
+		category: ["BODY LOTION"],
 	},
 	{
 		position: "two",
 		name: "Women’s Collections",
 		description: "Featured woman collections that give you another vibe",
 		thumbnail: coconutbodylotion,
+		category: ["CRÈME RELAXERS", "IRRESISTIBLE BEAUTY MAKEUP", "SOAP"],
 	},
 	{
 		position: "three",
 		name: "Hair Afro",
 		description: "New product with anti-dandruff",
 		thumbnail: hairafro,
+		category: ["ROYAL PETROLEUM JELLY"],
 	},
 	{
 		position: "four",
 		name: "Perfume",
 		description: "Gucci intense OUD EDP",
 		thumbnail: hairafro,
+		category: ["PERFUME", "BODY DEODORANT"],
 	},
 ];
 

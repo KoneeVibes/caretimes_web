@@ -41,7 +41,7 @@ export const FeaturedProducts = () => {
 		queryFn: async () => {
 			const allProducts = await retrieveAllProductService();
 			const productsWithCategoryNames = await Promise.all(
-				allProducts.map(async (prod: Record<string, any>) => {
+				allProducts?.data.map(async (prod: Record<string, any>) => {
 					if (!prod.category) return prod;
 					try {
 						const response = await retrieveCategoryByIdService(prod.category);
@@ -86,6 +86,14 @@ export const FeaturedProducts = () => {
 	) => {
 		e.stopPropagation();
 		navigate(`/products`);
+	};
+
+	const handleShopNow = (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+		category: string[],
+	) => {
+		e.stopPropagation();
+		navigate(`/products?category=${category.join(",")}`);
 	};
 
 	const handleAddToCart = (
@@ -235,6 +243,7 @@ export const FeaturedProducts = () => {
 										radius="0"
 										variant="contained"
 										bgcolor="transparent"
+										onClick={(e) => handleShopNow(e, product.category)}
 										padding="calc(var(--basic-padding)/9.5) 0"
 										sx={{ borderBottom: "1px solid var(--light-color)" }}
 									>

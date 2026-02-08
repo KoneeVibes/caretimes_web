@@ -1,8 +1,10 @@
 const BASE_ENDPOINT = process.env.REACT_APP_BASE_API;
 
 export const retrieveAllProductService = async (queryParams?: {
+	page?: string;
 	perPage?: string;
 	sortBy?: string;
+	sortParam?: string;
 	categories?: string[];
 	availability?: string[];
 	price?: {
@@ -11,8 +13,14 @@ export const retrieveAllProductService = async (queryParams?: {
 	};
 }) => {
 	const params = new URLSearchParams();
+	if (queryParams?.page) {
+		params.append("page", queryParams.page);
+	}
 	if (queryParams?.perPage) {
 		params.append("perPage", queryParams.perPage);
+	}
+	if (queryParams?.sortParam) {
+		params.append("sortParam", queryParams.sortParam);
 	}
 	if (queryParams?.sortBy) {
 		params.append("sortBy", queryParams.sortBy);
@@ -45,7 +53,7 @@ export const retrieveAllProductService = async (queryParams?: {
 			console.error("Error:", res);
 			throw new Error(res.message);
 		}
-		return res.data;
+		return res;
 	} catch (error) {
 		console.error("API fetch error:", error);
 		throw error;
