@@ -30,6 +30,8 @@
 		--cream-blend-inverse-color: #e4cdc8;
 		--close-icon-orange-color: #fa4e04;
 		--page-title-bg-color: #fef0c7;
+		--in-stock-green-color: #12b76a;
+		--icon-button-border-color: #00000080;
 
 		--basic-padding: 4.75rem;
 		--basic-margin: 4.75rem;
@@ -44,6 +46,13 @@
 	.loader {
 		width: calc(0.35 * calc(var(--basic-padding) / 2)) !important;
 		height: auto !important;
+	}
+
+	.loader.fixed-width {
+		transform: translate(-50%, -50%) !important;
+		position: absolute;
+		top: 50%;
+		left: 50%;
 	}
 
 	.authentication-method-selection-notification-modal .MuiDialog-paper {

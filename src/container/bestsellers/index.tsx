@@ -37,6 +37,15 @@ export const BestSellers = () => {
 	const [lastClicked, setlastClicked] = useState<Record<string, any> | null>(
 		null,
 	);
+	const [filter, setFilter] = useState<{
+		page: string;
+		perPage: string;
+		categories: string[];
+	}>({
+		page: "1",
+		perPage: "4",
+		categories: [],
+	});
 
 	const addToCartMutation = useMutation({
 		mutationFn: (product: Record<string, any>) =>
@@ -70,7 +79,7 @@ export const BestSellers = () => {
 	}, [TOKEN]);
 
 	const fetchProductsWithCategories = async () => {
-		const allProducts = await retrieveAllProductService();
+		const allProducts = await retrieveAllProductService(filter);
 		const productsWithCategoryNames = await Promise.all(
 			allProducts?.data.map(async (prod: Record<string, any>) => {
 				if (!prod.category) return prod;
@@ -93,7 +102,7 @@ export const BestSellers = () => {
 	};
 
 	const { data: allProduct } = useQuery({
-		queryKey: ["products-with-categories", TOKEN],
+		queryKey: ["products-with-categories", TOKEN, filter],
 		queryFn: () => fetchProductsWithCategories(),
 	});
 
@@ -113,7 +122,7 @@ export const BestSellers = () => {
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 	) => {
 		e.stopPropagation();
-		navigate(`/products?filter=best-seller`);
+		navigate(`/product?filter=best-seller`);
 	};
 
 	const handleTabClick = (
@@ -121,6 +130,10 @@ export const BestSellers = () => {
 		index: number,
 	) => {
 		e.stopPropagation();
+		setFilter((prev) => ({
+			...prev,
+			categories: [categories[index]?.name],
+		}));
 		return setActiveTabIndex(index);
 	};
 
@@ -133,6 +146,16 @@ export const BestSellers = () => {
 		setIsLoading(true);
 		setlastClicked(product);
 		addToCartMutation.mutate(product);
+	};
+
+	const handleNavigateToProductDetail = (
+		e:
+			| React.MouseEvent<HTMLDivElement, MouseEvent>
+			| React.MouseEvent<HTMLHeadingElement, MouseEvent>,
+		productId: string,
+	) => {
+		e.preventDefault();
+		navigate(`/product/${productId}`);
 	};
 
 	return (
@@ -261,7 +284,13 @@ export const BestSellers = () => {
 								size={{ mobile: 12, miniTablet: 6, laptop: 2 }}
 							>
 								<Stack className="best-seller-grid-item-body">
-									<Box component={"div"} className="best-seller-thumbnail-box">
+									<Box
+										component={"div"}
+										className="best-seller-thumbnail-box"
+										onClick={(e) =>
+											handleNavigateToProductDetail(e, bestSeller?.id)
+										}
+									>
 										<img src={bestSeller?.images?.[0]} alt={bestSeller?.name} />
 									</Box>
 									<Stack gap={"calc(var(--flex-gap)/8)"}>
@@ -281,12 +310,17 @@ export const BestSellers = () => {
 											</Typography>
 											<Typography
 												variant="h3"
+												component={"h3"}
 												fontFamily={"Inter"}
 												fontWeight={600}
 												fontSize={16}
 												lineHeight={"normal"}
 												whiteSpace={"normal"}
 												color={"var(--off-primary-color)"}
+												sx={{ cursor: "pointer" }}
+												onClick={(e) =>
+													handleNavigateToProductDetail(e, bestSeller?.id)
+												}
 											>
 												{bestSeller?.name}
 											</Typography>

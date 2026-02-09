@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProductsWrapper } from "./styled";
 import {
 	Box,
@@ -26,7 +26,7 @@ import { retrieveAllCategoryService } from "../../util/category/retrieveAllCateg
 import { addProductService } from "../../util/cart/addProduct";
 import { useRequireAuth } from "../../helper/requireAuthentication";
 import { ArrowForward, ArrowBack } from "@mui/icons-material";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export const Products = () => {
 	const resourceCount = [1, 10, 20];
@@ -35,6 +35,7 @@ export const Products = () => {
 	const cookies = new Cookies();
 	const TOKEN = cookies.getAll().TOKEN;
 
+	const navigate = useNavigate();
 	const [params] = useSearchParams();
 	const matches = useMediaQuery("(max-width:250px)");
 
@@ -80,7 +81,6 @@ export const Products = () => {
 	const [formDetails, setFormDetails] = useState<Record<string, any>>({
 		page: "1",
 		perPage: "10",
-		totalPages: "1",
 		sortParam: "price",
 		sortBy: "Ascending",
 		categories: [],
@@ -147,14 +147,7 @@ export const Products = () => {
 		placeholderData: (previousData) => previousData,
 	});
 
-	useEffect(() => {
-		if (data?.meta?.totalPages) {
-			setFormDetails((prev) => ({
-				...prev,
-				totalPages: String(data.meta.totalPages),
-			}));
-		}
-	}, [data]);
+	const totalPages = useMemo(() => data?.meta?.totalPages ?? 1, [data]);
 
 	useEffect(() => {
 		const filter = params.get("filter");
@@ -250,6 +243,16 @@ export const Products = () => {
 		addToCartMutation.mutate(product);
 	};
 
+	const handleNavigateToProductDetail = (
+		e:
+			| React.MouseEvent<HTMLDivElement, MouseEvent>
+			| React.MouseEvent<HTMLHeadingElement, MouseEvent>,
+		productId: string,
+	) => {
+		e.preventDefault();
+		navigate(`/product/${productId}`);
+	};
+
 	const handlePagination = (
 		e: React.MouseEvent<HTMLButtonElement>,
 		direction: "prev" | "next",
@@ -260,7 +263,7 @@ export const Products = () => {
 			const newPage =
 				direction === "prev"
 					? Math.max(1, currentPage - 1)
-					: Math.min(parseInt(prev.totalPages, 10), currentPage + 1);
+					: Math.min(totalPages, currentPage + 1);
 			return {
 				...prev,
 				page: newPage.toString(),
@@ -635,7 +638,13 @@ export const Products = () => {
 									}}
 								>
 									<Stack className="product-grid-item-body">
-										<Box component={"div"} className="product-thumbnail-box">
+										<Box
+											component={"div"}
+											className="product-thumbnail-box"
+											onClick={(e) =>
+												handleNavigateToProductDetail(e, product?.id)
+											}
+										>
 											<img src={product?.images?.[0]} alt={product?.name} />
 										</Box>
 										<Stack gap={"calc(var(--flex-gap)/8)"}>
@@ -655,12 +664,17 @@ export const Products = () => {
 												</Typography>
 												<Typography
 													variant="h3"
+													component={"h3"}
 													fontFamily={"Inter"}
 													fontWeight={600}
 													fontSize={16}
 													lineHeight={"normal"}
 													whiteSpace={"normal"}
+													sx={{ cursor: "pointer" }}
 													color={"var(--off-primary-color)"}
+													onClick={(e) =>
+														handleNavigateToProductDetail(e, product?.id)
+													}
 												>
 													{product?.name}
 												</Typography>
@@ -782,7 +796,7 @@ export const Products = () => {
 						radius="64px"
 						variant="outlined"
 						onClick={(e) => handlePagination(e, "next")}
-						disabled={formDetails.page === formDetails.totalPages || isFetching}
+						disabled={formDetails.page === totalPages || isFetching}
 						endIcon={<ArrowForward />}
 						colour="var(--primary-color)"
 						sx={{

@@ -93,6 +93,16 @@ export const SavedItems = () => {
 		}
 	};
 
+	const handleNavigateToProductDetail = (
+		e:
+			| React.MouseEvent<HTMLDivElement, MouseEvent>
+			| React.MouseEvent<HTMLHeadingElement, MouseEvent>,
+		productId: string,
+	) => {
+		e.preventDefault();
+		navigate(`/product/${productId}`);
+	};
+
 	return (
 		<SavedItemsWrapper>
 			<Stack
@@ -167,7 +177,11 @@ export const SavedItems = () => {
 							size={{ mobile: 12, miniTablet: 6, laptop: 2.5 }}
 						>
 							<Stack className="saved-product-grid-item-body">
-								<Box component={"div"} className="saved-product-thumbnail-box">
+								<Box
+									component={"div"}
+									className="saved-product-thumbnail-box"
+									onClick={(e) => handleNavigateToProductDetail(e, product?.id)}
+								>
 									<img src={product?.images?.[0]} alt={product?.name} />
 								</Box>
 								<Stack gap={"calc(var(--flex-gap)/8)"}>
@@ -187,12 +201,17 @@ export const SavedItems = () => {
 										</Typography>
 										<Typography
 											variant="h3"
+											component={"h3"}
 											fontFamily={"Inter"}
 											fontWeight={600}
 											fontSize={16}
 											lineHeight={"normal"}
 											whiteSpace={"normal"}
+											sx={{ cursor: "pointer" }}
 											color={"var(--off-primary-color)"}
+											onClick={(e) =>
+												handleNavigateToProductDetail(e, product?.id)
+											}
 										>
 											{product?.name}
 										</Typography>

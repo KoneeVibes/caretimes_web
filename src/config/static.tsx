@@ -25,7 +25,7 @@ export const navLinks = [
 	},
 	{
 		name: "All Products",
-		url: "/products",
+		url: "/product",
 	},
 	{
 		name: "About Us",

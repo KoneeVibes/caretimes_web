@@ -20,6 +20,7 @@ export const SavedItemsWrapper = styled(Stack)(({ theme }) => {
 				gap: "calc(var(--flex-gap)/8)",
 				border: "1px solid var(--border-faint-primary-color)",
 				"& .saved-product-thumbnail-box": {
+					cursor: "pointer",
 					height: "11.25rem",
 					"& img": {
 						width: "100%",

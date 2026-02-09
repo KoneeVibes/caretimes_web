@@ -85,7 +85,7 @@ export const FeaturedProducts = () => {
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 	) => {
 		e.stopPropagation();
-		navigate(`/products`);
+		navigate(`/product`);
 	};
 
 	const handleShopNow = (
@@ -93,7 +93,7 @@ export const FeaturedProducts = () => {
 		category: string[],
 	) => {
 		e.stopPropagation();
-		navigate(`/products?category=${category.join(",")}`);
+		navigate(`/product?category=${category.join(",")}`);
 	};
 
 	const handleAddToCart = (
@@ -105,6 +105,16 @@ export const FeaturedProducts = () => {
 		setIsLoading(true);
 		setlastClicked(product);
 		addToCartMutation.mutate(product);
+	};
+
+	const handleNavigateToProductDetail = (
+		e:
+			| React.MouseEvent<HTMLDivElement, MouseEvent>
+			| React.MouseEvent<HTMLHeadingElement, MouseEvent>,
+		productId: string,
+	) => {
+		e.preventDefault();
+		navigate(`/product/${productId}`);
 	};
 
 	return (
@@ -275,6 +285,9 @@ export const FeaturedProducts = () => {
 										<Box
 											component={"div"}
 											className="featured-product-thumbnail-box"
+											onClick={(e) =>
+												handleNavigateToProductDetail(e, bestSeller?.id)
+											}
 										>
 											<img
 												src={bestSeller?.images?.[0]}
@@ -298,12 +311,17 @@ export const FeaturedProducts = () => {
 												</Typography>
 												<Typography
 													variant="h3"
+													component={"h3"}
 													fontFamily={"Inter"}
 													fontWeight={600}
 													fontSize={16}
 													lineHeight={"normal"}
 													whiteSpace={"normal"}
+													sx={{ cursor: "pointer" }}
 													color={"var(--off-primary-color)"}
+													onClick={(e) =>
+														handleNavigateToProductDetail(e, bestSeller?.id)
+													}
 												>
 													{bestSeller?.name}
 												</Typography>
