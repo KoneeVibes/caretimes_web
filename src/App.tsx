@@ -6,18 +6,21 @@ import { About } from "./page/about";
 import { Contact } from "./page/contact";
 import { Checkout } from "./page/checkout";
 import { ProductDetail } from "./page/productdetail";
+import ScrollToTop from "./ScrollToTop";
 
 function App() {
 	return (
 		<BrowserRouter>
-			<Routes>
-				<Route path="/" element={<Home />} />
-				<Route path="/product" element={<Product />} />
-				<Route path="/about" element={<About />} />
-				<Route path="/contact" element={<Contact />} />
-				<Route path="/checkout" element={<Checkout />} />
-				<Route path="/product/:id" element={<ProductDetail />} />
-			</Routes>
+			<ScrollToTop>
+				<Routes>
+					<Route path="/" element={<Home />} />
+					<Route path="/product" element={<Product />} />
+					<Route path="/about" element={<About />} />
+					<Route path="/contact" element={<Contact />} />
+					<Route path="/checkout" element={<Checkout />} />
+					<Route path="/product/:id" element={<ProductDetail />} />
+				</Routes>
+			</ScrollToTop>
 		</BrowserRouter>
 	);
 }
