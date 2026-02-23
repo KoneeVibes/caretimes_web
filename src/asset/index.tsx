@@ -6,3 +6,4 @@ export { ReactComponent as MarqueeDot } from "./icon/marquee-dot.svg";
 export { ReactComponent as LinkedInIcon } from "./icon/linkedin-icon.svg";
 export { ReactComponent as FacebookIcon } from "./icon/facebook-icon.svg";
 export { ReactComponent as TwitterIcon } from "./icon/twitter-icon.svg";
+export { ReactComponent as PriceIcon } from "./icon/price-icon.svg";

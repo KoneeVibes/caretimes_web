@@ -21,19 +21,19 @@ export const OurStory = () => {
 						whiteSpace={"normal"}
 						color={"var(--dark-color)"}
 					>
-						Welcome to [Your Store Name], your go-to destination for
-						high-quality products and a seamless shopping experience. Founded in
-						[Year], we started with a simple mission: to make everyday
-						essentials more accessible, stylish, and affordable. Whether you're
-						searching for the latest fashion trends, home must-haves, or unique
-						gifts, we've got you covered with a curated selection of items
-						you'll love. At [Your Store Name], customer satisfaction is at the
-						heart of everything we do. From easy browsing and secure checkout to
-						fast delivery and dedicated support, we’re here to make your
-						shopping journey smooth and enjoyable. We’re more than just a
-						store—we’re a community of passionate people who believe in quality,
-						creativity, and exceptional service. Thank you for choosing us.
-						We’re excited to be part of your lifestyle!
+						OLITE Manufacturing Company Limited is a trusted manufacturer of
+						cosmetic and personal care products, committed to enhancing everyday
+						beauty, confidence, and wellness. We produce a diverse portfolio of
+						high-quality products designed to meet the evolving needs of modern
+						consumers. Our formulations are created using carefully selected
+						active ingredients and are produced under strict quality control
+						systems that comply with both local and international safety
+						standards. Every product reflects our dedication to effectiveness,
+						safety, and consistency. At OLITE, consumer satisfaction is central
+						to everything we do. Through continuous research, innovation, and
+						improvement, we deliver products that support healthy skin, personal
+						hygiene, and self-confidence, while offering exceptional value for
+						money.
 					</Typography>
 				</Box>
 			</Stack>
@@ -63,14 +63,19 @@ export const OurStory = () => {
 							whiteSpace={"normal"}
 							color={"var(--dark-color)"}
 						>
-							What started as a small idea among friends/family/passionate
-							founders has grown into a thriving online community of loyal
-							customers and quality products. We launched [Your Store Name] with
-							a vision—to challenge the traditional retail experience and bring
-							something better to the table. Something more thoughtful. More
-							customer-first. More fun. Today, we're proud to serve thousands of
-							happy shoppers across [countries/regions], and we're just getting
-							started.
+							OLITE Manufacturing Company Limited was founded with a clear
+							purpose: to make quality beauty and personal care products
+							accessible, reliable, and responsibly made. Driven by a passion
+							for beauty, wellness, and innovation, we built our operations on
+							strong manufacturing principles such as - hygiene, quality assurance, and
+							sustainability. From the very beginning, our focus has been on
+							creating products that consumers can trust and feel confident
+							using every day. Over time, our commitment to excellence has
+							enabled us to build strong, long-lasting relationships with
+							distributors, retailers, and consumers. As we continue to grow,
+							our vision remains unchanged: to become a household name known for
+							quality, reliability, and consistent performance across every
+							product we offer.
 						</Typography>
 					</Box>
 				</Stack>

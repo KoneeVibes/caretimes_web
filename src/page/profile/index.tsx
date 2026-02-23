@@ -1,13 +1,13 @@
-import { BaseMarquee } from "../../component/marquee";
-import { Cart } from "../../container/cart";
-import { Footer } from "../../container/footer";
-import { Location } from "../../container/location";
 import { Navigation } from "../../container/navigation";
-import { CheckoutWrapper } from "./styled";
+import { BaseMarquee } from "../../component/marquee";
+import { Location } from "../../container/location";
+import { ProfileWrapper } from "./styled";
+import { Footer } from "../../container/footer";
+import { ProfileArea } from "../../container/profilearea";
 
-export const Checkout = () => {
+export const Profile = () => {
 	return (
-		<CheckoutWrapper
+		<ProfileWrapper
 			maxWidth={false}
 			sx={{
 				padding: "0 !important",
@@ -18,8 +18,8 @@ export const Checkout = () => {
 				background="var(--marquee-bg-color)"
 			/>
 			<Navigation />
-			<Cart />
+			<ProfileArea />
 			<Footer />
-		</CheckoutWrapper>
+		</ProfileWrapper>
 	);
 };

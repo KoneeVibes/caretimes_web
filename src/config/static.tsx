@@ -6,6 +6,7 @@ import {
 	ProfileIcon,
 	TwitterIcon,
 } from "../asset";
+import LoginIcon from "@mui/icons-material/Login";
 import heroImgOne from "../asset/image/hero-image-one.svg";
 import babycare from "../asset/image/category-babycare.svg";
 import skincare from "../asset/image/category-skincare.svg";
@@ -39,13 +40,13 @@ export const navLinks = [
 
 export const navCallToActions = [
 	{
+		name: "Login",
+		icon: <LoginIcon sx={{ color: "var(--light-color)" }} />,
+	},
+	{
 		name: "Profile",
 		icon: <ProfileIcon />,
 	},
-	// {
-	// 	name: "Favourites",
-	// 	icon: <FavouriteIcon />,
-	// },
 	{
 		name: "Cart",
 		icon: <CartIcon />,
@@ -57,27 +58,27 @@ export const physicalLocations = ["Lagos", "Asaba", "Ibadan", "Portharcourt"];
 export const heroInfo = [
 	{
 		subtitle: "Protect Your Skin",
-		title: "Daily Routine With Skincare",
+		title: "Daily Care for Healthy Skin",
 		description:
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facilisis augue consectetur suspendisse enim. Auctor faucibus orci vulputate turpis. Libero, dolor accumsan, adipiscing pellentesque.",
+			"Our skincare products are thoughtfully formulated to cleanse, nourish, and protect the skin, supporting a healthy, balanced complexion for everyday confidence.",
 		callToActionText: "Explore Category",
 		callToActionUrl: "/",
 		image: heroImgOne,
 	},
 	{
-		subtitle: "Protect Your Skin",
-		title: "Daily Routine With Skincare",
+		subtitle: "Strengthen Your Hair",
+		title: "Everyday Care for Healthy Hair",
 		description:
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facilisis augue consectetur suspendisse enim. Auctor faucibus orci vulputate turpis. Libero, dolor accumsan, adipiscing pellentesque.",
+			"Our hair care solutions are carefully formulated to cleanse, nourish, and protect hair, helping to improve strength, shine, and manageability for daily confidence.",
 		callToActionText: "Explore Category",
 		callToActionUrl: "/",
 		image: heroImgOne,
 	},
 	{
-		subtitle: "Protect Your Skin",
-		title: "Daily Routine With Skincare",
+		subtitle: "Care for Your Body",
+		title: "Daily Comfort and Lasting Freshness",
 		description:
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facilisis augue consectetur suspendisse enim. Auctor faucibus orci vulputate turpis. Libero, dolor accumsan, adipiscing pellentesque.",
+			"Designed for everyday use, our body care products cleanse, moisturize, and refresh the skin while supporting comfort, hygiene, and long-lasting freshness.",
 		callToActionText: "Explore Category",
 		callToActionUrl: "/",
 		image: heroImgOne,
@@ -217,18 +218,23 @@ export const socialMedia = [
 
 export const offerings = [
 	{
-		title: "A carefully curated range of cosmetic Products",
+		title: "Personal Care Products",
 		description:
-			"Understanding your specific requirements and challenges to recommend the most suitable products",
+			"Thoughtfully formulated essentials designed to support daily hygiene, comfort, and overall wellness",
 	},
 	{
-		title: "A carefully curated range of cosmetic Products",
+		title: "Perfumery Products",
 		description:
-			"Understanding your specific requirements and challenges to recommend the most suitable products",
+			"Refreshing and long-lasting fragrances crafted to enhance confidence and personal expression",
 	},
 	{
-		title: "A carefully curated range of cosmetic Products",
+		title: "Toiletries & Soaps",
 		description:
-			"Understanding your specific requirements and challenges to recommend the most suitable products",
+			"Reliable cleaning solutions developed for effective hygiene at home and on the go",
+	},
+	{
+		title: "Color Cosmetics",
+		description:
+			"High-quality makeup products created to enhance natural beauty with lasting color and performance",
 	},
 ];

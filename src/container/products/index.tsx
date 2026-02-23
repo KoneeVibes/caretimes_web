@@ -796,7 +796,9 @@ export const Products = () => {
 						radius="64px"
 						variant="outlined"
 						onClick={(e) => handlePagination(e, "next")}
-						disabled={formDetails.page === totalPages || isFetching}
+						disabled={
+							Number(formDetails.page) === Number(totalPages) || isFetching
+						}
 						endIcon={<ArrowForward />}
 						colour="var(--primary-color)"
 						sx={{

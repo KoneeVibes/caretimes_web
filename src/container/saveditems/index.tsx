@@ -44,6 +44,7 @@ export const SavedItems = () => {
 						...product,
 						cartId: cart?.id ?? null,
 						quantity: cart?.quantity ?? 0,
+						unitPrice: cart?.unitPrice ?? 0,
 						category: category?.name ?? null,
 					};
 				} catch (error) {
@@ -254,7 +255,7 @@ export const SavedItems = () => {
 											display={"inline-block"}
 											width={"100%"}
 										>
-											{`₦${formatAmountDisplay(product?.price)}`}
+											{`₦${formatAmountDisplay(product?.unitPrice)}`}
 										</Typography>
 									</Box>
 									<Box sx={{ display: "flex", overflow: "hidden" }}>

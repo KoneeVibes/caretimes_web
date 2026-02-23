@@ -3,8 +3,18 @@ import { WhatWeDoWrapper } from "./styled";
 import { offerings } from "../../config/static";
 import checkboxIcon from "../../asset/icon/checked-sticker-icon.svg";
 import { BaseButton } from "../../component/button/styled";
+import { useNavigate } from "react-router-dom";
 
 export const WhatWeDo = () => {
+	const navigate = useNavigate();
+
+	const handleNavigateToContactUs = (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+	) => {
+		e.preventDefault();
+		return navigate("/contact");
+	};
+
 	return (
 		<WhatWeDoWrapper>
 			<Box>
@@ -59,7 +69,7 @@ export const WhatWeDo = () => {
 				})}
 			</Stack>
 			<Box component={"div"} className="call-to-action-box">
-				<BaseButton variant="contained">
+				<BaseButton variant="contained" onClick={handleNavigateToContactUs}>
 					<Typography
 						variant={"button"}
 						fontFamily={"inherit"}

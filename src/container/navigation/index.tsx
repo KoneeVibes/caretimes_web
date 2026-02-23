@@ -19,9 +19,15 @@ import { AppContext } from "../../context";
 import { BaseNotificationModal } from "../../component/modal/notification";
 import authMethodSelectionThumbnail from "../../asset/image/auth-method-selection-thumbnail.png";
 import { AuthenticationFormModal } from "../forms/authentication";
+import { useRequireAuth } from "../../helper/requireAuthentication";
+import Cookies from "universal-cookie";
 
 export const Navigation = () => {
+	const cookies = new Cookies();
+	const TOKEN = cookies.getAll().TOKEN;
+
 	const navigate = useNavigate();
+	const { requireAuth } = useRequireAuth();
 	const {
 		openMenu,
 		setOpenMenu,
@@ -91,10 +97,12 @@ export const Navigation = () => {
 	) => {
 		e.stopPropagation();
 		switch (id) {
-			case "Profile":
+			case "Login":
 				setIsAuthenticationFormModalOpen({ status: true, index: 1 });
 				break;
-			case "Favourites":
+			case "Profile":
+				if (!requireAuth(TOKEN)) return;
+				navigate("/profile");
 				break;
 			case "Cart":
 				navigate("/checkout");
