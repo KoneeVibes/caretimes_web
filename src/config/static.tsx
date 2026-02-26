@@ -7,14 +7,14 @@ import {
 	TwitterIcon,
 } from "../asset";
 import LoginIcon from "@mui/icons-material/Login";
-import heroImgOne from "../asset/image/hero-image-one.svg";
-import babycare from "../asset/image/category-babycare.svg";
-import skincare from "../asset/image/category-skincare.svg";
-import bodylotion from "../asset/image/category-bodylotion.svg";
-import deodorant from "../asset/image/category-bodylotion.svg";
-import haircare from "../asset/image/category-haircare.svg";
-import coconutbodylotion from "../asset/image/featured-product-coconut-body-lotion.svg";
-import hairafro from "../asset/image/featured-product-hair-afro.svg";
+import heroImgOne from "../asset/image/WEBSITE BANNER 1.jpg";
+import heroImgTwo from "../asset/image/WEBSITE BANNER 2.jpg";
+import heroImgThree from "../asset/image/WEBSITE BANNER 3.jpg";
+import heroImgFour from "../asset/image/WEBSITE BANNER 4.jpg";
+import heroImgFive from "../asset/image/WEBSITE BANNER 5.jpg";
+import homeCare from "../asset/image/home-care-products.jpg";
+import hairFruit from "../asset/image/hair-fruit.jpg";
+import ultraWash from "../asset/image/no-dirty.png";
 import headshotone from "../asset/image/testimonial-headshot-one.svg";
 import headshottwo from "../asset/image/testimonial-headshot-two.svg";
 import headshotthree from "../asset/image/testimonial-headshot-three.svg";
@@ -72,66 +72,73 @@ export const heroInfo = [
 			"Our hair care solutions are carefully formulated to cleanse, nourish, and protect hair, helping to improve strength, shine, and manageability for daily confidence.",
 		callToActionText: "Explore Category",
 		callToActionUrl: "/",
-		image: heroImgOne,
+		image: heroImgTwo,
 	},
 	{
-		subtitle: "Care for Your Body",
-		title: "Daily Comfort and Lasting Freshness",
+		subtitle: "Express Your Scent",
+		title: "Fragrance That Lasts All Day",
 		description:
-			"Designed for everyday use, our body care products cleanse, moisturize, and refresh the skin while supporting comfort, hygiene, and long-lasting freshness.",
+			"Our perfumery products are crafted to deliver refreshing, long-lasting scents that enhance personal style and leave a lasting impression.",
 		callToActionText: "Explore Category",
 		callToActionUrl: "/",
-		image: heroImgOne,
+		image: heroImgThree,
 	},
-];
-
-export const productCategories = [
-	{ title: "Baby Care", img: babycare },
-	{ title: "Body Care", img: skincare },
-	{ title: "Body Lotion", img: bodylotion },
-	{ title: "Deodorant", img: deodorant },
-	{ title: "Hair Care", img: haircare },
-	{ title: "Baby Care", img: babycare },
-	{ title: "Body Care", img: skincare },
-	{ title: "Body Lotion", img: bodylotion },
-	{ title: "Deodorant", img: deodorant },
-	{ title: "Hair Care", img: haircare },
-	{ title: "Baby Care", img: babycare },
-	{ title: "Body Care", img: skincare },
-	{ title: "Body Lotion", img: bodylotion },
-	{ title: "Deodorant", img: deodorant },
-	{ title: "Hair Care", img: haircare },
+	{
+		subtitle: "Nourish Your Hair",
+		title: "Daily Moisture and Hair Protection",
+		description:
+			"Our hair creams are formulated to moisturize, soften, and protect hair, helping to reduce dryness while improving strength, shine, and manageability.",
+		callToActionText: "Explore Category",
+		callToActionUrl: "/",
+		image: heroImgFour,
+	},
+	{
+		subtitle: "Cleanse with Care",
+		title: "Gentle and Effective Cleansing",
+		description:
+			"Our soaps are carefully crafted to deliver effective cleansing while being gentle on the skin, supporting hygiene, freshness, and everyday skin comfort.",
+		callToActionText: "Explore Category",
+		callToActionUrl: "/",
+		image: heroImgFive,
+	},
 ];
 
 export const featuredProducts = [
 	{
 		position: "one",
-		name: "Coconut Body Lotion",
+		name: "Home Care",
 		description:
-			"Freshly made from harvested coconut with the best nutrients for your skin",
-		thumbnail: coconutbodylotion,
-		category: ["BODY LOTION"],
+			"Effective household cleaning solutions designed to deliver hygiene, freshness, and everyday protection.",
+		thumbnail: homeCare,
+		category: ["BODY LOTION", "SOAP", "PERFUME"],
 	},
 	{
 		position: "two",
-		name: "Women’s Collections",
-		description: "Featured woman collections that give you another vibe",
-		thumbnail: coconutbodylotion,
-		category: ["CRÈME RELAXERS", "IRRESISTIBLE BEAUTY MAKEUP", "SOAP"],
+		name: "Hair Fruit",
+		description:
+			"Nourishing hair care enriched with fruit-inspired ingredients to support healthy, vibrant hair.",
+		thumbnail: hairFruit,
+		category: [
+			"CRÈME RELAXERS",
+			"ROYAL PETROLEUM JELLY",
+			"IRRESISTIBLE BEAUTY MAKEUP",
+		],
 	},
 	{
 		position: "three",
-		name: "Hair Afro",
-		description: "New product with anti-dandruff",
-		thumbnail: hairafro,
-		category: ["ROYAL PETROLEUM JELLY"],
-	},
-	{
-		position: "four",
-		name: "Perfume",
-		description: "Gucci intense OUD EDP",
-		thumbnail: hairafro,
-		category: ["PERFUME", "BODY DEODORANT"],
+		name: "Ultra Wash",
+		description:
+			"Powerful cleaning formula developed for deep cleansing and long-lasting freshness.",
+		thumbnail: ultraWash,
+		category: [
+			"BODY LOTION",
+			"BODY DEODORANT",
+			"SOAP",
+			"PERFUME",
+			"CRÈME RELAXERS",
+			"ROYAL PETROLEUM JELLY",
+			"IRRESISTIBLE BEAUTY MAKEUP",
+		],
 	},
 ];
 

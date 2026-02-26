@@ -17,6 +17,7 @@ export const FeaturedProductsWrapper = styled(Stack)(({ theme }) => {
 				backgroundPosition: "bottom center",
 				width: "100%",
 				overflow: "hidden",
+				display: "flex",
 				"& .featured-products-category-grid-item-body": {
 					padding: "calc(var(--basic-padding)/3)",
 					gap: "calc(var(--flex-gap)/4)",
@@ -54,13 +55,6 @@ export const FeaturedProductsWrapper = styled(Stack)(({ theme }) => {
 			display: "flex",
 			justifyContent: "center",
 			overflow: "hidden",
-		},
-		[theme.breakpoints.up("miniTablet")]: {
-			"& .featured-products-category": {
-				"& .featured-products-category-grid-item": {
-					display: "flex",
-				},
-			},
 		},
 		[theme.breakpoints.up("tablet")]: {
 			padding: "calc(var(--basic-padding)/2) calc(var(--basic-padding))",

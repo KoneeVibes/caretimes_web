@@ -197,19 +197,19 @@ export const FeaturedProducts = () => {
 				sx={{
 					display: "grid",
 					gridTemplateAreas: {
-						mobile: `"one" "two" "three" "four"`,
-						miniTablet: `"one two" "three four"`,
-						laptop: `"one two two" "one three four"`,
+						mobile: `"one" "two" "three"`,
+						tablet: `"one two" "three three"`,
+						laptop: `"one two two" "one three three"`,
 					},
 					gridTemplateColumns: {
 						mobile: "1fr",
-						miniTablet: "1fr 1fr",
+						tablet: "1fr 1fr",
 						laptop: "2fr 1fr 1fr",
 					},
 					gap: "calc(var(--flex-gap)/4)",
 				}}
 			>
-				{featuredProducts?.slice(0, 4).map((product, index) => {
+				{featuredProducts?.slice(0, 3).map((product, index) => {
 					return (
 						<Box
 							key={index}
