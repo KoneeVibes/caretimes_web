@@ -15,7 +15,7 @@ export const Hero: React.FC<CategoryRef> = ({ categoryRef }) => {
 				autoPlay={true}
 				autoFocus={true}
 				infiniteLoop={true}
-				interval={2000}
+				interval={10000}
 				showIndicators={false}
 				showThumbs={false}
 				showStatus={false}
