@@ -1,24 +1,107 @@
-import { Box, Grid, Stack, Typography } from "@mui/material";
-import { ProfileAreaWrapper } from "./styled";
-import avatar from "../../asset/image/demo-avatar.svg";
+import Cookies from "universal-cookie";
 import { Fragment, useState } from "react";
+import { ProfileAreaWrapper } from "./styled";
+import { useQuery } from "@tanstack/react-query";
+import avatar from "../../asset/image/demo-avatar.svg";
+import { Box, Grid, Stack, Typography } from "@mui/material";
+import { retrieveLoggedInUserService } from "../../util/usermanagement/retrieveLoggedInUser";
+import { ProfileFormModal } from "../forms/profile";
+import { useNavigate } from "react-router-dom";
+import { signOutUserService } from "../../util/authentication/signOut";
 
 export const ProfileArea = () => {
-	const tabKeys = ["User Profile", "Passwords", "Log Out"];
+	const tabKeys = ["User Profile", "Transactions", "Log Out"];
+
+	const cookies = new Cookies();
+	const TOKEN = cookies.getAll().TOKEN;
+
+	const navigate = useNavigate();
 
 	const [activeTab, setActiveTab] = useState(tabKeys[0]);
+	const [activeForm, setActiveForm] = useState<string | null>(null);
+	const [user, setUser] = useState<Record<string, any> | null>(null);
+
+	const fetchLoggedInUser = async () => {
+		const loggedInUser = await retrieveLoggedInUserService(TOKEN);
+		return loggedInUser;
+	};
+
+	const { data: profile } = useQuery({
+		queryKey: ["profile", TOKEN, user],
+		queryFn: () => fetchLoggedInUser(),
+	});
+
+	const handleLogOutUser = async () => {
+		try {
+			const response = await signOutUserService(TOKEN);
+			if (response.status === "success") {
+				cookies.remove("TOKEN", { path: "/" });
+				navigate("/", { replace: true });
+			} else {
+				console.error("Logout failed. Try again");
+			}
+		} catch (error: any) {
+			console.error("Logout failed, Contact Admin:", error);
+		}
+	};
 
 	const handleTabClick = (
 		e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
 		tabKey: string,
 	) => {
 		e.preventDefault();
-		if (activeTab === tabKey || tabKey === "Log Out") return;
+		if (activeTab === tabKey || tabKey === "Log Out") return handleLogOutUser();
 		setActiveTab(tabKey);
+	};
+
+	const handleOpenFormModal = (
+		e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+		id: string,
+	) => {
+		e.preventDefault();
+		switch (id) {
+			case "profile-photo":
+				setUser({ avatar: profile?.avatar || null });
+				break;
+			case "personal-information":
+				setUser({
+					firstName: profile?.firstName || "",
+					lastName: profile?.lastName || "",
+					email: profile?.email || "",
+					phone: profile?.phone || "",
+				});
+				break;
+			case "delivery-address":
+				setUser({
+					country: profile?.country || "Nigeria",
+					state: profile?.location || "",
+					street: profile?.street || "",
+					landmark: profile?.landmark || "",
+					houseNumber: profile?.houseNumber || "",
+				});
+				break;
+			default:
+				setUser(null);
+				break;
+		}
+		return setActiveForm(id);
+	};
+
+	const handleCloseFormModal = () => {
+		setActiveForm(null);
+		return setUser(null);
 	};
 
 	return (
 		<ProfileAreaWrapper>
+			{!!activeForm && (
+				<ProfileFormModal
+					user={user}
+					open={!!activeForm}
+					id={activeForm || ""}
+					handleClose={handleCloseFormModal}
+				/>
+			)}
 			<Box>
 				<Typography
 					variant="subtitle1"
@@ -79,7 +162,7 @@ export const ProfileArea = () => {
 								<Stack className="user-info">
 									<Box component={"div"} className="user-avatar-box">
 										<img
-											src={avatar}
+											src={profile?.avatar || avatar}
 											alt="user-avatar"
 											className="user-avatar"
 										/>
@@ -96,7 +179,7 @@ export const ProfileArea = () => {
 												maxWidth={"150px"}
 												marginBlockEnd={"calc(var(--basic-margin)/8)"}
 											>
-												John Doe
+												{`${profile?.firstName || "NA"} ${profile?.lastName || ""}`}
 											</Typography>
 										</Box>
 										<Box>
@@ -125,6 +208,7 @@ export const ProfileArea = () => {
 										whiteSpace={"normal"}
 										sx={{ cursor: "pointer" }}
 										color={"var(--primary-color)"}
+										onClick={(e) => handleOpenFormModal(e, "profile-photo")}
 									>
 										Edit Profile Photo
 									</Typography>
@@ -150,7 +234,7 @@ export const ProfileArea = () => {
 										spacing={"calc(var(--flex-gap)/4)"}
 										justifyContent={"space-between"}
 									>
-										<Grid
+										{/* <Grid
 											component={"div"}
 											className="personal-information-grid-item"
 											size={{ mobile: 12, tablet: 6 }}
@@ -181,7 +265,7 @@ export const ProfileArea = () => {
 													</Typography>
 												</Box>
 											</Stack>
-										</Grid>
+										</Grid> */}
 										<Grid
 											component={"div"}
 											className="personal-information-grid-item"
@@ -209,7 +293,7 @@ export const ProfileArea = () => {
 														lineHeight={"normal"}
 														color={"var(--profile-text-color)"}
 													>
-														John
+														{profile?.firstName || "NA"}
 													</Typography>
 												</Box>
 											</Stack>
@@ -241,7 +325,7 @@ export const ProfileArea = () => {
 														lineHeight={"normal"}
 														color={"var(--profile-text-color)"}
 													>
-														Doe
+														{profile?.lastName || "NA"}
 													</Typography>
 												</Box>
 											</Stack>
@@ -273,7 +357,7 @@ export const ProfileArea = () => {
 														lineHeight={"normal"}
 														color={"var(--profile-text-color)"}
 													>
-														johndoe@gmail.com
+														{profile?.email || "NA"}
 													</Typography>
 												</Box>
 											</Stack>
@@ -305,7 +389,7 @@ export const ProfileArea = () => {
 														lineHeight={"normal"}
 														color={"var(--profile-text-color)"}
 													>
-														+234 810 000 1111
+														{profile?.phone || "NA"}
 													</Typography>
 												</Box>
 											</Stack>
@@ -314,6 +398,7 @@ export const ProfileArea = () => {
 								</Stack>
 								<Box component={"div"} className="profile-card-call-to-action">
 									<Typography
+										component={"h6"}
 										variant="subtitle2"
 										fontFamily={"Inter"}
 										fontWeight={600}
@@ -323,6 +408,9 @@ export const ProfileArea = () => {
 										whiteSpace={"normal"}
 										sx={{ cursor: "pointer" }}
 										color={"var(--primary-color)"}
+										onClick={(e) =>
+											handleOpenFormModal(e, "personal-information")
+										}
 									>
 										Edit Personal Information
 									</Typography>
@@ -407,7 +495,7 @@ export const ProfileArea = () => {
 														lineHeight={"normal"}
 														color={"var(--profile-text-color)"}
 													>
-														Mainland, Lagos
+														{profile?.location || "NA"}
 													</Typography>
 												</Box>
 											</Stack>
@@ -439,7 +527,7 @@ export const ProfileArea = () => {
 														lineHeight={"normal"}
 														color={"var(--profile-text-color)"}
 													>
-														10B
+														{profile?.houseNumber || "NA"}
 													</Typography>
 												</Box>
 											</Stack>
@@ -471,7 +559,7 @@ export const ProfileArea = () => {
 														lineHeight={"normal"}
 														color={"var(--profile-text-color)"}
 													>
-														Michael Ososipe Street, Ago Palace Way
+														{profile?.street || "NA"}
 													</Typography>
 												</Box>
 											</Stack>
@@ -503,7 +591,7 @@ export const ProfileArea = () => {
 														lineHeight={"normal"}
 														color={"var(--profile-text-color)"}
 													>
-														Okota Roundabout
+														{profile?.landmark || "NA"}
 													</Typography>
 												</Box>
 											</Stack>
@@ -512,6 +600,7 @@ export const ProfileArea = () => {
 								</Stack>
 								<Box component={"div"} className="profile-card-call-to-action">
 									<Typography
+										component={"h6"}
 										variant="subtitle2"
 										fontFamily={"Inter"}
 										fontWeight={600}
@@ -521,6 +610,7 @@ export const ProfileArea = () => {
 										whiteSpace={"normal"}
 										sx={{ cursor: "pointer" }}
 										color={"var(--primary-color)"}
+										onClick={(e) => handleOpenFormModal(e, "delivery-address")}
 									>
 										Edit Delivery Address
 									</Typography>

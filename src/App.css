@@ -77,4 +77,12 @@
 		right: 0;
 		margin: 0;
 	}
+
+	.profile-form-modal .MuiDialog-paper {
+		overflow: hidden;
+		border-radius: 15px;
+		max-width: 49.625rem;
+		max-height: 38.4375rem;
+		width: -webkit-fill-available;
+	}
 }

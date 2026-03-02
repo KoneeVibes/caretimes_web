@@ -38,6 +38,17 @@ export const ProfileAreaWrapper = styled(Stack)(({ theme }) => {
 					"& .user-info": {
 						flex: 0.75,
 						gap: "calc(var(--flex-gap)/3)",
+						"& .user-avatar-box": {
+							width: "100%",
+							height: "auto",
+							borderRadius: "50%",
+							objectFit: "cover",
+							"& img": {
+								width: "100%",
+								height: "100%",
+								borderRadius: "inherit",
+							},
+						},
 					},
 					"& .personal-information": {
 						flex: 0.75,
@@ -60,6 +71,20 @@ export const ProfileAreaWrapper = styled(Stack)(({ theme }) => {
 							overflow: "hidden",
 							"& .delivery-information-grid-item-body": {
 								gap: "calc(var(--flex-gap)/8)",
+							},
+						},
+					},
+				},
+			},
+		},
+		[theme.breakpoints.up(200)]: {
+			"& .tab-area": {
+				"& .tab-content": {
+					"& .content-area": {
+						"& .user-info": {
+							"& .user-avatar-box": {
+								width: "50px",
+								height: "50px",
 							},
 						},
 					},
