@@ -12,7 +12,6 @@ export const Hero: React.FC<CategoryRef> = ({ categoryRef }) => {
 	return (
 		<HeroWrapper>
 			<Carousel
-				autoPlay={true}
 				autoFocus={true}
 				infiniteLoop={true}
 				interval={10000}

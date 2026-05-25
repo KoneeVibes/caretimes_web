@@ -14,12 +14,14 @@
 		--dark-variant-color: #070606;
 		--off-primary-color: #8d5245;
 		--off-light-color: #fafafa;
+		--dull-light-color: #f7f7f7;
 		--error-red-color: #ff0000;
 		--input-field-text-color: #aaadb4;
 		--input-field-border-color: #dcdfe6;
 		--form-label-color: #606266;
 		--marquee-bg-color: #f6eeed;
 		--text-gray-color: #535862;
+		--bg-gray-color: #f5f5f5;
 		--border-primary-color: #dbbdb6;
 		--border-off-primary-color: #c99b91;
 		--border-faint-primary-color: #e9eaeb;

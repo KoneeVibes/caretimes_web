@@ -189,20 +189,29 @@ export const testimonial = [
 
 export const footerLinks = {
 	Company: [
-		"About Us",
-		"Become a Distributor",
-		"Our Locations",
-		"Contact Us",
-		"Career",
+		{
+			title: "About Us",
+			url: "/about",
+		},
+		{
+			title: "Become a Distributor",
+			url: "/contact/sales",
+		},
+		{
+			title: "Contact Us",
+			url: "/contact",
+		},
 	],
-	"Quick Links": [
-		"Join our Newsletter",
-		"Shipping and Returns",
-		"Privacy Policy",
-		"Terms of Use",
-		"FAQs",
+	Account: [
+		{
+			title: "My Profile",
+			url: "/profile",
+		},
+		{
+			title: "Cart",
+			url: "/checkout",
+		},
 	],
-	Account: ["My Account", "Wishlist", "Cart", "Track Order"],
 };
 
 export const socialMedia = [

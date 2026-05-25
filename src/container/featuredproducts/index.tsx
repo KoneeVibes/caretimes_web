@@ -1,7 +1,7 @@
 import {
 	Box,
-	CircularProgress,
-	Grid,
+	// CircularProgress,
+	// Grid,
 	Stack,
 	Typography,
 	useMediaQuery,
@@ -10,76 +10,76 @@ import { FeaturedProductsWrapper } from "./styled";
 import { BaseButton } from "../../component/button/styled";
 import { ArrowForward } from "@mui/icons-material";
 import { featuredProducts } from "../../config/static";
-import { formatAmountDisplay } from "../../helper/formatAmountDisplay";
+// import { formatAmountDisplay } from "../../helper/formatAmountDisplay";
 import { useNavigate } from "react-router-dom";
-import { useRequireAuth } from "../../helper/requireAuthentication";
-import Cookies from "universal-cookie";
+// import { useRequireAuth } from "../../helper/requireAuthentication";
+// import Cookies from "universal-cookie";
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addProductService } from "../../util/cart/addProduct";
-import { retrieveAllProductService } from "../../util/product/retrieveAllProduct";
-import { retrieveCategoryByIdService } from "../../util/category/retrieveCategoryById";
+// import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+// import { addProductService } from "../../util/cart/addProduct";
+// import { retrieveAllProductService } from "../../util/product/retrieveAllProduct";
+// import { retrieveCategoryByIdService } from "../../util/category/retrieveCategoryById";
 
 export const FeaturedProducts = () => {
-	const cookies = new Cookies();
-	const TOKEN = cookies.getAll().TOKEN;
+	// const cookies = new Cookies();
+	// const TOKEN = cookies.getAll().TOKEN;
 
 	const navigate = useNavigate();
-	const queryClient = useQueryClient();
-	const { requireAuth } = useRequireAuth();
+	// const queryClient = useQueryClient();
+	// const { requireAuth } = useRequireAuth();
 	const matches = useMediaQuery("(max-width:250px)");
 
-	const [isLoading, setIsLoading] = useState(false);
+	// const [isLoading, setIsLoading] = useState(false);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [error, setError] = useState<string | null>(null);
-	const [lastClicked, setlastClicked] = useState<Record<string, any> | null>(
-		null,
-	);
+	// const [lastClicked, setlastClicked] = useState<Record<string, any> | null>(
+	// 	null,
+	// );
 
-	const { data: bestSellers } = useQuery({
-		queryKey: ["best-sellers", TOKEN],
-		queryFn: async () => {
-			const allProducts = await retrieveAllProductService();
-			const productsWithCategoryNames = await Promise.all(
-				allProducts?.data.map(async (prod: Record<string, any>) => {
-					if (!prod.category) return prod;
-					try {
-						const response = await retrieveCategoryByIdService(prod.category);
-						return {
-							...prod,
-							category: response?.name ?? null,
-						};
-					} catch (error) {
-						console.error(`Error fetching category: ${prod.category}`, error);
-						return {
-							...prod,
-							category: null,
-						};
-					}
-				}),
-			);
-			return (
-				productsWithCategoryNames
-					// include field to check for the highest number of orders in the order table
-					.slice(0, 4)
-			);
-		},
-	});
+	// const { data: bestSellers } = useQuery({
+	// 	queryKey: ["best-sellers", TOKEN],
+	// 	queryFn: async () => {
+	// 		const allProducts = await retrieveAllProductService();
+	// 		const productsWithCategoryNames = await Promise.all(
+	// 			allProducts?.data.map(async (prod: Record<string, any>) => {
+	// 				if (!prod.category) return prod;
+	// 				try {
+	// 					const response = await retrieveCategoryByIdService(prod.category);
+	// 					return {
+	// 						...prod,
+	// 						category: response?.name ?? null,
+	// 					};
+	// 				} catch (error) {
+	// 					console.error(`Error fetching category: ${prod.category}`, error);
+	// 					return {
+	// 						...prod,
+	// 						category: null,
+	// 					};
+	// 				}
+	// 			}),
+	// 		);
+	// 		return (
+	// 			productsWithCategoryNames
+	// 				// include field to check for the highest number of orders in the order table
+	// 				.slice(0, 4)
+	// 		);
+	// 	},
+	// });
 
-	const addToCartMutation = useMutation({
-		mutationFn: (product: Record<string, any>) =>
-			addProductService(TOKEN, product),
-		onSuccess: () => {
-			setIsLoading(false);
-			queryClient.invalidateQueries({
-				queryKey: ["products-in-cart-with-categories", TOKEN],
-			});
-		},
-		onError: (error: any) => {
-			setIsLoading(false);
-			setError(`Add to cart failed. ${error.message}`);
-		},
-	});
+	// const addToCartMutation = useMutation({
+	// 	mutationFn: (product: Record<string, any>) =>
+	// 		addProductService(TOKEN, product),
+	// 	onSuccess: () => {
+	// 		setIsLoading(false);
+	// 		queryClient.invalidateQueries({
+	// 			queryKey: ["products-in-cart-with-categories", TOKEN],
+	// 		});
+	// 	},
+	// 	onError: (error: any) => {
+	// 		setIsLoading(false);
+	// 		setError(`Add to cart failed. ${error.message}`);
+	// 	},
+	// });
 
 	const handleBrowseProducts = (
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -96,26 +96,26 @@ export const FeaturedProducts = () => {
 		navigate(`/product?category=${category.join(",")}`);
 	};
 
-	const handleAddToCart = (
-		e: React.MouseEvent<HTMLButtonElement>,
-		product: Record<string, any>,
-	) => {
-		e.preventDefault();
-		if (!requireAuth(TOKEN)) return;
-		setIsLoading(true);
-		setlastClicked(product);
-		addToCartMutation.mutate(product);
-	};
+	// const handleAddToCart = (
+	// 	e: React.MouseEvent<HTMLButtonElement>,
+	// 	product: Record<string, any>,
+	// ) => {
+	// 	e.preventDefault();
+	// 	if (!requireAuth(TOKEN)) return;
+	// 	setIsLoading(true);
+	// 	setlastClicked(product);
+	// 	addToCartMutation.mutate(product);
+	// };
 
-	const handleNavigateToProductDetail = (
-		e:
-			| React.MouseEvent<HTMLDivElement, MouseEvent>
-			| React.MouseEvent<HTMLHeadingElement, MouseEvent>,
-		productId: string,
-	) => {
-		e.preventDefault();
-		navigate(`/product/${productId}`);
-	};
+	// const handleNavigateToProductDetail = (
+	// 	e:
+	// 		| React.MouseEvent<HTMLDivElement, MouseEvent>
+	// 		| React.MouseEvent<HTMLHeadingElement, MouseEvent>,
+	// 	productId: string,
+	// ) => {
+	// 	e.preventDefault();
+	// 	navigate(`/product/${productId}`);
+	// };
 
 	return (
 		<FeaturedProductsWrapper>
@@ -265,7 +265,7 @@ export const FeaturedProducts = () => {
 					);
 				})}
 			</Box>
-			<Stack className="featured-products">
+			{/* <Stack className="featured-products">
 				<Grid
 					container
 					component={"div"}
@@ -409,7 +409,7 @@ export const FeaturedProducts = () => {
 						</Typography>
 					</BaseButton>
 				</Box>
-			</Stack>
+			</Stack> */}
 		</FeaturedProductsWrapper>
 	);
 };
