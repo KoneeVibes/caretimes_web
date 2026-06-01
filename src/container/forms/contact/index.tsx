@@ -31,8 +31,8 @@ export const ContactForm = () => {
 
 	useEffect(() => console.log(id));
 
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [isLoading] = useState(false);
+	const [error] = useState<string | null>(null);
 	const [formDetails, setFormDetails] =
 		useState<Partial<FormDetails>>(initialFormDetails);
 
@@ -63,17 +63,17 @@ export const ContactForm = () => {
 		setActiveFormType(id === "sales" ? "sales" : "support");
 	}, [id]);
 
-	const getPayload = () => {
-		if (activeFormType === "sales") {
-			return formDetails;
-		}
-		return {
-			fullName: formDetails.fullName,
-			phone: formDetails.phone,
-			additionalInfo: formDetails.additionalInfo,
-			reasonForContact: formDetails.reasonForContact,
-		};
-	};
+	// const getPayload = () => {
+	// 	if (activeFormType === "sales") {
+	// 		return formDetails;
+	// 	}
+	// 	return {
+	// 		fullName: formDetails.fullName,
+	// 		phone: formDetails.phone,
+	// 		additionalInfo: formDetails.additionalInfo,
+	// 		reasonForContact: formDetails.reasonForContact,
+	// 	};
+	// };
 
 	return (
 		<ContactFormWrapper>
