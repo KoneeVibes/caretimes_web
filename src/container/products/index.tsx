@@ -21,7 +21,6 @@ import { BaseButton } from "../../component/button/styled";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Cookies from "universal-cookie";
 import { retrieveAllProductService } from "../../util/product/retrieveAllProduct";
-import { retrieveCategoryByIdService } from "../../util/category/retrieveCategoryById";
 import { retrieveAllCategoryService } from "../../util/category/retrieveAllCategory";
 import { addProductService } from "../../util/cart/addProduct";
 import { useRequireAuth } from "../../helper/requireAuthentication";
@@ -105,25 +104,9 @@ export const Products = () => {
 
 	const fetchProductsWithCategories = async () => {
 		const allProducts = await retrieveAllProductService(formDetails);
-		const productsWithCategoryNames = await Promise.all(
-			allProducts.data.map(async (prod: Record<string, any>) => {
-				if (!prod.category) return prod;
-				try {
-					const response = await retrieveCategoryByIdService(prod.category);
-					return {
-						...prod,
-						category: response?.name ?? null,
-					};
-				} catch {
-					return {
-						...prod,
-						category: null,
-					};
-				}
-			}),
-		);
+		const response = allProducts.data;
 		return {
-			products: productsWithCategoryNames,
+			products: response,
 			meta: allProducts.meta,
 		};
 	};

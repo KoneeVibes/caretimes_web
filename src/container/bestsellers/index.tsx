@@ -14,13 +14,28 @@ import { formatAmountDisplay } from "../../helper/formatAmountDisplay";
 import { retrieveAllCategoryService } from "../../util/category/retrieveAllCategory";
 import Cookies from "universal-cookie";
 import { retrieveAllProductService } from "../../util/product/retrieveAllProduct";
-import { retrieveCategoryByIdService } from "../../util/category/retrieveCategoryById";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { addProductService } from "../../util/cart/addProduct";
 import { useRequireAuth } from "../../helper/requireAuthentication";
 
 export const BestSellers = () => {
+	// convert this to a state and manage update for price/categories field
+	const isMobile = useMediaQuery("(max-width:426px)");
+	const isTablet = useMediaQuery("(min-width:769px) and (max-width:1024px)");
+	const isLaptop = useMediaQuery("(min-width:1025px) and (max-width:1280px)");
+	const isMiniTablet = useMediaQuery("(min-width:426px) and (max-width:768px)");
+
+	const gridView = isMobile
+		? 12
+		: isMiniTablet
+			? 12
+			: isTablet
+				? 6
+				: isLaptop
+					? 4
+					: 3;
+
 	const cookies = new Cookies();
 	const TOKEN = cookies.getAll().TOKEN;
 
@@ -80,25 +95,7 @@ export const BestSellers = () => {
 
 	const fetchProductsWithCategories = async () => {
 		const allProducts = await retrieveAllProductService(filter);
-		const productsWithCategoryNames = await Promise.all(
-			allProducts?.data.map(async (prod: Record<string, any>) => {
-				if (!prod.category) return prod;
-				try {
-					const response = await retrieveCategoryByIdService(prod.category);
-					return {
-						...prod,
-						category: response?.name ?? null,
-					};
-				} catch (error) {
-					console.error(`Error fetching category: ${prod.category}`, error);
-					return {
-						...prod,
-						category: null,
-					};
-				}
-			}),
-		);
-		return productsWithCategoryNames;
+		return allProducts.data;
 	};
 
 	const { data: allProduct } = useQuery({
@@ -113,10 +110,15 @@ export const BestSellers = () => {
 		return (
 			allProduct
 				// include field to check for the highest number of orders in the order table
-				.filter((product) => product.category === activeCategory.name)
+				.filter(
+					(product: Record<string, any>) =>
+						product.category === activeCategory.name,
+				)
 				.slice(0, 4)
 		);
 	}, [allProduct, categories, activeTabIndex]);
+
+	useEffect(() => console.log(bestSellers), [bestSellers]);
 
 	const handleShowAllClick = (
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -273,60 +275,75 @@ export const BestSellers = () => {
 					container
 					component={"div"}
 					spacing={"calc(var(--flex-gap)/4)"}
-					justifyContent={"space-between"}
+					justifyContent={"flex-end"}
 				>
-					{bestSellers?.slice(0, 4).map((bestSeller, index) => {
-						return (
-							<Grid
-								key={index}
-								component={"div"}
-								className="best-seller-grid-item"
-								size={{ mobile: 12, miniTablet: 6, laptop: 2 }}
-							>
-								<Stack className="best-seller-grid-item-body">
-									<Box
-										component={"div"}
-										className="best-seller-thumbnail-box"
-										onClick={(e) =>
-											handleNavigateToProductDetail(e, bestSeller?.id)
-										}
-									>
-										<img src={bestSeller?.images?.[0]} alt={bestSeller?.name} />
-									</Box>
-									<Stack gap={"calc(var(--flex-gap)/8)"}>
-										<Box>
-											<Typography
-												variant="caption"
-												fontFamily={"Inter"}
-												fontWeight={600}
-												fontSize={12}
-												lineHeight={"normal"}
-												whiteSpace={"normal"}
-												color={"var(--subtitle-gray-color)"}
-												display={"inline-block"}
-												width={"100%"}
-											>
-												{bestSeller?.category}
-											</Typography>
-											<Typography
-												variant="h3"
-												component={"h3"}
-												fontFamily={"Inter"}
-												fontWeight={600}
-												fontSize={16}
-												lineHeight={"normal"}
-												whiteSpace={"normal"}
-												color={"var(--off-primary-color)"}
-												sx={{ cursor: "pointer" }}
-												onClick={(e) =>
-													handleNavigateToProductDetail(e, bestSeller?.id)
-												}
-											>
-												{bestSeller?.name}
-											</Typography>
+					{bestSellers
+						?.slice(0, 4)
+						.map((bestSeller: Record<string, any>, index: number) => {
+							return (
+								<Grid
+									key={index}
+									component={"div"}
+									className="best-seller-grid-item"
+									size={gridView}
+									sx={{
+										flexGrow:
+											bestSellers?.slice(0, 4).length > 0 &&
+											bestSellers?.slice(0, 4).length % (12 / gridView) !== 0 &&
+											index >=
+												bestSellers?.slice(0, 4).length -
+													(bestSellers?.slice(0, 4).length % (12 / gridView))
+												? "0 !important"
+												: "1 !important",
+									}}
+								>
+									<Stack className="best-seller-grid-item-body">
+										<Box
+											component={"div"}
+											className="best-seller-thumbnail-box"
+											onClick={(e) =>
+												handleNavigateToProductDetail(e, bestSeller?.id)
+											}
+										>
+											<img
+												src={bestSeller?.images?.[0]}
+												alt={bestSeller?.name}
+											/>
 										</Box>
-										<Box>
-											{/* <Stack
+										<Stack gap={"calc(var(--flex-gap)/8)"}>
+											<Box>
+												<Typography
+													variant="caption"
+													fontFamily={"Inter"}
+													fontWeight={600}
+													fontSize={12}
+													lineHeight={"normal"}
+													whiteSpace={"normal"}
+													color={"var(--subtitle-gray-color)"}
+													display={"inline-block"}
+													width={"100%"}
+												>
+													{bestSeller?.category}
+												</Typography>
+												<Typography
+													variant="h3"
+													component={"h3"}
+													fontFamily={"Inter"}
+													fontWeight={600}
+													fontSize={16}
+													lineHeight={"normal"}
+													whiteSpace={"normal"}
+													color={"var(--off-primary-color)"}
+													sx={{ cursor: "pointer" }}
+													onClick={(e) =>
+														handleNavigateToProductDetail(e, bestSeller?.id)
+													}
+												>
+													{bestSeller?.name}
+												</Typography>
+											</Box>
+											<Box>
+												{/* <Stack
 												direction="row"
 												gap={"calc(var(--flex-gap)/32)"}
 												marginBlockEnd={"calc(var(--basic-margin)/16)"}
@@ -352,59 +369,59 @@ export const BestSellers = () => {
 													</Fragment>
 												))}
 											</Stack> */}
-											<Typography
-												variant="caption"
-												fontFamily={"Inter"}
-												fontWeight={600}
-												fontSize={16}
-												lineHeight={"normal"}
-												whiteSpace={"normal"}
-												color={"var(--off-primary-color)"}
-												display={"inline-block"}
-												width={"100%"}
-											>
-												{`₦${formatAmountDisplay(bestSeller?.price)}`}
-											</Typography>
-										</Box>
-										<Box sx={{ display: "flex", overflow: "hidden" }}>
-											<BaseButton
-												disableElevation
-												variant="contained"
-												sx={{ width: "100%" }}
-												onClick={(e) =>
-													handleAddToCart(e, {
-														product: bestSeller?.id,
-														quantity: 1,
-														price: bestSeller?.price,
-													})
-												}
-											>
-												{isLoading &&
-												lastClicked?.product === bestSeller?.id ? (
-													<CircularProgress
-														color="inherit"
-														className="loader"
-													/>
-												) : (
-													<Typography
-														variant={"button"}
-														fontFamily={"inherit"}
-														fontWeight={"inherit"}
-														fontSize={"inherit"}
-														lineHeight={"inherit"}
-														color={"inherit"}
-														textTransform={"inherit"}
-													>
-														Add to Cart
-													</Typography>
-												)}
-											</BaseButton>
-										</Box>
+												<Typography
+													variant="caption"
+													fontFamily={"Inter"}
+													fontWeight={600}
+													fontSize={16}
+													lineHeight={"normal"}
+													whiteSpace={"normal"}
+													color={"var(--off-primary-color)"}
+													display={"inline-block"}
+													width={"100%"}
+												>
+													{`₦${formatAmountDisplay(bestSeller?.price)}`}
+												</Typography>
+											</Box>
+											<Box sx={{ display: "flex", overflow: "hidden" }}>
+												<BaseButton
+													disableElevation
+													variant="contained"
+													sx={{ width: "100%" }}
+													onClick={(e) =>
+														handleAddToCart(e, {
+															product: bestSeller?.id,
+															quantity: 1,
+															price: bestSeller?.price,
+														})
+													}
+												>
+													{isLoading &&
+													lastClicked?.product === bestSeller?.id ? (
+														<CircularProgress
+															color="inherit"
+															className="loader"
+														/>
+													) : (
+														<Typography
+															variant={"button"}
+															fontFamily={"inherit"}
+															fontWeight={"inherit"}
+															fontSize={"inherit"}
+															lineHeight={"inherit"}
+															color={"inherit"}
+															textTransform={"inherit"}
+														>
+															Add to Cart
+														</Typography>
+													)}
+												</BaseButton>
+											</Box>
+										</Stack>
 									</Stack>
-								</Stack>
-							</Grid>
-						);
-					})}
+								</Grid>
+							);
+						})}
 				</Grid>
 			</Stack>
 		</BestSellersWrapper>

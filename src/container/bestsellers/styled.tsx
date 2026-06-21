@@ -16,7 +16,6 @@ export const BestSellersWrapper = styled(Stack)(({ theme }) => {
 				overflow: "hidden",
 			},
 			"& .best-seller-grid-item": {
-				flexGrow: "1 !important",
 				overflow: "hidden",
 				"& .best-seller-grid-item-body": {
 					justifyContent: "space-between",

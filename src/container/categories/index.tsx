@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography, useMediaQuery } from "@mui/material";
 import { CategoriesWrapper } from "./styled";
 import { Carousel } from "react-responsive-carousel";
 import { BaseButton } from "../../component/button/styled";
@@ -9,7 +9,23 @@ import { retrieveAllCategoryService } from "../../util/category/retrieveAllCateg
 import { CategoryRef } from "../../type/container.type";
 
 export const Categories: React.FC<CategoryRef> = ({ categoryRef }) => {
-	const maxCategoriesPerSet = 5;
+	const maxCategoriesPerSet = 4;
+
+	// convert this to a state and manage update for price/categories field
+	const isMobile = useMediaQuery("(max-width:426px)");
+	const isTablet = useMediaQuery("(min-width:769px) and (max-width:1024px)");
+	const isLaptop = useMediaQuery("(min-width:1025px) and (max-width:1280px)");
+	const isMiniTablet = useMediaQuery("(min-width:426px) and (max-width:768px)");
+
+	const gridView = isMobile
+		? 12
+		: isMiniTablet
+			? 12
+			: isTablet
+				? 6
+				: isLaptop
+					? 4
+					: 3;
 
 	const cookies = new Cookies();
 	const TOKEN = cookies.getAll().TOKEN;
@@ -71,7 +87,6 @@ export const Categories: React.FC<CategoryRef> = ({ categoryRef }) => {
 			</Box>
 			<Box>
 				<Carousel
-					autoPlay={true}
 					autoFocus={true}
 					infiniteLoop={false}
 					interval={2000}
@@ -148,15 +163,14 @@ export const Categories: React.FC<CategoryRef> = ({ categoryRef }) => {
 										<Grid
 											key={category?.id}
 											component={"div"}
-											size={{ mobile: 12, miniTablet: 6, laptop: 2 }}
+											size={gridView}
 											sx={{
-												flexGrow: {
-													mobile:
-														set?.length % 2 !== 0 && index === set.length - 1
-															? 0
-															: 1,
-													laptop: 1,
-												},
+												flexGrow:
+													set.length > 0 &&
+													set.length % (12 / gridView) !== 0 &&
+													index >= set.length - (set.length % (12 / gridView))
+														? "0 !important"
+														: "1 !important",
 											}}
 										>
 											<Box component={"div"} className="category-thumbnail-box">

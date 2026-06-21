@@ -29,8 +29,6 @@ export const ContactForm = () => {
 		id === "sales" || id === "support" ? id : "support",
 	);
 
-	useEffect(() => console.log(id));
-
 	const [isLoading] = useState(false);
 	const [error] = useState<string | null>(null);
 	const [formDetails, setFormDetails] =
