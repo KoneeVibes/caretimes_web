@@ -15,9 +15,15 @@ import { footerLinks, socialMedia } from "../../config/static";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import { useNavigate } from "react-router-dom";
+import { useRequireAuth } from "../../helper/requireAuthentication";
+import Cookies from "universal-cookie";
 
 export const Footer = () => {
+	const cookies = new Cookies();
+	const TOKEN = cookies.getAll().TOKEN;
+
 	const navigate = useNavigate();
+	const { requireAuth } = useRequireAuth();
 	const matches = useMediaQuery("(max-width:200px)");
 
 	const [formDetails, setFormDetails] = useState({
@@ -47,6 +53,9 @@ export const Footer = () => {
 		item: Record<string, any>,
 	) => {
 		e.preventDefault();
+		if (["/profile", "/checkout"].includes(item.url)) {
+			if (!requireAuth(TOKEN)) return;
+		}
 		return navigate(item.url);
 	};
 
