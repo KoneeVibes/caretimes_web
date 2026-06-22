@@ -105,6 +105,7 @@ export const Navigation = () => {
 				navigate("/profile");
 				break;
 			case "Cart":
+				if (!requireAuth(TOKEN)) return;
 				navigate("/checkout");
 				break;
 			default:
