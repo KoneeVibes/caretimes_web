@@ -1,6 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { BannerWrapper } from "./styled";
-import bannerImg from "../../asset/image/banner-img.svg";
+import bannerImg from "../../asset/image/banner-img.jpeg";
 import { Fragment } from "react/jsx-runtime";
 import { BaseButton } from "../../component/button/styled";
 

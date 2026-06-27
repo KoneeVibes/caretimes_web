@@ -11,7 +11,6 @@ import heroImgOne from "../asset/image/WEBSITE BANNER 1.jpg";
 import heroImgTwo from "../asset/image/WEBSITE BANNER 2.jpg";
 import heroImgThree from "../asset/image/WEBSITE BANNER 3.jpg";
 import heroImgFour from "../asset/image/WEBSITE BANNER 4.jpg";
-import heroImgFive from "../asset/image/WEBSITE BANNER 5.jpg";
 import homeCare from "../asset/image/home-care-products.jpg";
 import hairFruit from "../asset/image/hair-fruit.jpg";
 import ultraWash from "../asset/image/no-dirty.png";
@@ -63,15 +62,6 @@ export const heroInfo = [
 			"Our skincare products are thoughtfully formulated to cleanse, nourish, and protect the skin, supporting a healthy, balanced complexion for everyday confidence.",
 		callToActionText: "Explore Category",
 		callToActionUrl: "/",
-		image: heroImgOne,
-	},
-	{
-		subtitle: "Strengthen Your Hair",
-		title: "Everyday Care for Healthy Hair",
-		description:
-			"Our hair care solutions are carefully formulated to cleanse, nourish, and protect hair, helping to improve strength, shine, and manageability for daily confidence.",
-		callToActionText: "Explore Category",
-		callToActionUrl: "/",
 		image: heroImgTwo,
 	},
 	{
@@ -90,7 +80,7 @@ export const heroInfo = [
 			"Our hair creams are formulated to moisturize, soften, and protect hair, helping to reduce dryness while improving strength, shine, and manageability.",
 		callToActionText: "Explore Category",
 		callToActionUrl: "/",
-		image: heroImgFour,
+		image: heroImgOne,
 	},
 	{
 		subtitle: "Cleanse with Care",
@@ -99,7 +89,7 @@ export const heroInfo = [
 			"Our soaps are carefully crafted to deliver effective cleansing while being gentle on the skin, supporting hygiene, freshness, and everyday skin comfort.",
 		callToActionText: "Explore Category",
 		callToActionUrl: "/",
-		image: heroImgFive,
+		image: heroImgFour,
 	},
 ];
 
