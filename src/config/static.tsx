@@ -14,9 +14,9 @@ import heroImgFour from "../asset/image/WEBSITE BANNER 4.jpg";
 import homeCare from "../asset/image/home-care-products.jpg";
 import hairFruit from "../asset/image/hair-fruit.jpg";
 import ultraWash from "../asset/image/no-dirty.png";
-import headshotone from "../asset/image/testimonial-headshot-one.svg";
-import headshottwo from "../asset/image/testimonial-headshot-two.svg";
-import headshotthree from "../asset/image/testimonial-headshot-three.svg";
+import headshotone from "../asset/image/testimonial-headshot-one.png";
+import headshottwo from "../asset/image/testimonial-headshot-two.png";
+import headshotthree from "../asset/image/testimonial-headshot-three.png";
 
 export const navLinks = [
 	{
@@ -134,44 +134,23 @@ export const featuredProducts = [
 
 export const testimonial = [
 	{
-		customer: "Robert Fox",
+		customer: "Chidinma Okafor",
 		review:
-			"Tranexx has transformed my approach to finance. Their smart investing options have helped me grow my wealth, and their user-friendly platform makes managing my money a breeze. I've never felt more confident about my financial future.",
+			"I tried Caretimes Shampoo recently and I really like it. It washes my hair well but doesn't leave it dry or stripped out. After every wash my hair feels fresh, soft, and easy to manage. It also smells nice. You only need a little bit each time, so the bottle lasts a while and it's worth the money. All in all, it's a good shampoo and I'd recommend it if you want something gentle that actually works.",
 		title: "Happy Product User",
 		headshot: headshotone,
 	},
 	{
-		customer: "Cameron Williamson",
+		customer: "Aisha Bello",
 		review:
-			"Tranexx has transformed my approach to finance. Their smart investing options have helped me grow my wealth, and their user-friendly platform makes managing my money a breeze. I've never felt more confident about my financial future.",
+			"I've been using Caretimes Relaxer and I'm really happy with it. It relaxed my hair evenly and didn't irritate my scalp. Afterward my hair felt soft, smooth, and easy to manage. I also liked that the smell wasn't too strong. Overall, it's a good relaxer that worked well for me, and I'd recommend it to anyone looking for something reliable.",
 		title: "Happy Product User",
 		headshot: headshottwo,
 	},
 	{
-		customer: "Esther Howard",
+		customer: "Tobiloba Adeyemi",
 		review:
-			"Tranexx has transformed my approach to finance. Their smart investing options have helped me grow my wealth, and their user-friendly platform makes managing my money a breeze. I've never felt more confident about my financial future.",
-		title: "Happy Product User",
-		headshot: headshotthree,
-	},
-	{
-		customer: "Robert Fox 3",
-		review:
-			"Tranexx has transformed my approach to finance. Their smart investing options have helped me grow my wealth, and their user-friendly platform makes managing my money a breeze. I've never felt more confident about my financial future.",
-		title: "Happy Product User",
-		headshot: headshotone,
-	},
-	{
-		customer: "Cameron Williamson 3",
-		review:
-			"Tranexx has transformed my approach to finance. Their smart investing options have helped me grow my wealth, and their user-friendly platform makes managing my money a breeze. I've never felt more confident about my financial future.",
-		title: "Happy Product User",
-		headshot: headshottwo,
-	},
-	{
-		customer: "Esther Howard 3",
-		review:
-			"Tranexx has transformed my approach to finance. Their smart investing options have helped me grow my wealth, and their user-friendly platform makes managing my money a breeze. I've never felt more confident about my financial future.",
+			"I recently used Caretimes products and I was genuinely impressed. They worked exactly as expected, were easy to use, and gave great results. You can tell they're made with care, and I felt satisfied with my purchase. I'd happily recommend Caretimes to anyone looking for reliable, effective personal care products. I'll definitely be buying from them again.",
 		title: "Happy Product User",
 		headshot: headshotthree,
 	},
