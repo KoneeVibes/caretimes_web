@@ -12,8 +12,8 @@ import { BaseInput } from "../../component/form/input/styled";
 import { BaseButton } from "../../component/button/styled";
 import { useState } from "react";
 import { footerLinks, socialMedia } from "../../config/static";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+// import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+// import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import { useNavigate } from "react-router-dom";
 import { useRequireAuth } from "../../helper/requireAuthentication";
 import Cookies from "universal-cookie";
@@ -204,86 +204,40 @@ export const Footer = () => {
 										</Typography>
 									</Box>
 								))}
+								{sectionTitle === "Contact Us" && (
+									<Stack
+										flexDirection={{ tablet: "row" }}
+										alignItems={{ tablet: "center" }}
+										gap={"calc(var(--flex-gap)/8)"}
+									>
+										<Box>
+											<Typography
+												variant="caption"
+												fontFamily="Inter"
+												fontWeight={700}
+												fontSize={{ mobile: 14 }}
+												lineHeight="normal"
+												whiteSpace="normal"
+												color="var(--dark-color)"
+											>
+												Find us on:
+											</Typography>
+										</Box>
+										<Stack
+											flexDirection={"row"}
+											gap={"calc(var(--flex-gap)/16)"}
+										>
+											{socialMedia?.map((channel, index) => (
+												<Box key={index} sx={{ cursor: "pointer" }}>
+													{channel.icon}
+												</Box>
+											))}
+										</Stack>
+									</Stack>
+								)}
 							</Stack>
 						</Stack>
 					))}
-				</Stack>
-				<Stack className="footer-layer-two-RHS">
-					<Box>
-						<Typography
-							variant="h3"
-							fontFamily="Inter"
-							fontWeight={600}
-							fontSize={{ mobile: 18 }}
-							lineHeight="normal"
-							whiteSpace="normal"
-							color="var(--dark-color)"
-						>
-							Contact Us
-						</Typography>
-					</Box>
-					<Stack className="footer-layer-two-RHS-contact-area">
-						<Box overflow={"hidden"}>
-							<PhoneOutlinedIcon />
-						</Box>
-						<Stack gap={"calc(var(--flex-gap)/4)"}>
-							<Box>
-								<Typography
-									variant="body1"
-									fontFamily="Inter"
-									fontWeight={400}
-									fontSize={{ mobile: 14 }}
-									lineHeight="normal"
-									whiteSpace="normal"
-									color="var(--dark-color)"
-								>
-									Got questions? Call us 24/7
-								</Typography>
-							</Box>
-							<Box>
-								<Typography
-									variant="body1"
-									fontFamily="Inter"
-									fontWeight={700}
-									fontSize={{ mobile: 14 }}
-									lineHeight="normal"
-									whiteSpace="normal"
-									color="var(--dark-color)"
-								>
-									(00) 11 234 5648
-								</Typography>
-							</Box>
-						</Stack>
-						<Box overflow={"hidden"}>
-							<ArrowForwardIosIcon />
-						</Box>
-					</Stack>
-					<Stack
-						flexDirection={{ tablet: "row" }}
-						alignItems={{ tablet: "center" }}
-						gap={"calc(var(--flex-gap)/8)"}
-					>
-						<Box>
-							<Typography
-								variant="caption"
-								fontFamily="Inter"
-								fontWeight={700}
-								fontSize={{ mobile: 14 }}
-								lineHeight="normal"
-								whiteSpace="normal"
-								color="var(--dark-color)"
-							>
-								Find us on:
-							</Typography>
-						</Box>
-						<Stack flexDirection={"row"} gap={"calc(var(--flex-gap)/16)"}>
-							{socialMedia?.map((channel, index) => (
-								<Box key={index} sx={{ cursor: "pointer" }}>
-									{channel.icon}
-								</Box>
-							))}
-						</Stack>
-					</Stack>
 				</Stack>
 			</Stack>
 			<Stack className="footer-layer-three">

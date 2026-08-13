@@ -166,10 +166,6 @@ export const footerLinks = {
 			title: "Become a Distributor",
 			url: "/contact/sales",
 		},
-		{
-			title: "Contact Us",
-			url: "/contact",
-		},
 	],
 	Account: [
 		{
@@ -179,6 +175,12 @@ export const footerLinks = {
 		{
 			title: "Cart",
 			url: "/checkout",
+		},
+	],
+	"Contact Us": [
+		{
+			title: "Contact Us",
+			url: "/contact",
 		},
 	],
 };
