@@ -6,7 +6,7 @@ import avatar from "../../asset/image/demo-avatar.svg";
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import { retrieveLoggedInUserService } from "../../util/usermanagement/retrieveLoggedInUser";
 import { ProfileFormModal } from "../forms/profile";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { signOutUserService } from "../../util/authentication/signOut";
 
 export const ProfileArea = () => {
@@ -16,10 +16,13 @@ export const ProfileArea = () => {
 	const TOKEN = cookies.getAll().TOKEN;
 
 	const navigate = useNavigate();
+	const { tabIndex } = useParams();
 
-	const [activeTab, setActiveTab] = useState(tabKeys[0]);
 	const [activeForm, setActiveForm] = useState<string | null>(null);
 	const [user, setUser] = useState<Record<string, any> | null>(null);
+	const [activeTab, setActiveTab] = useState(
+		tabKeys[Number(tabIndex?.trim()) ? Number(tabIndex?.trim()) : 0],
+	);
 
 	const fetchLoggedInUser = async () => {
 		const loggedInUser = await retrieveLoggedInUserService(TOKEN);

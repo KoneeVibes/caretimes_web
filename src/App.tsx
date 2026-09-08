@@ -20,7 +20,7 @@ function App() {
 					<Route path="/contact/:id?" element={<Contact />} />
 					<Route path="/checkout" element={<Checkout />} />
 					<Route path="/product/:id" element={<ProductDetail />} />
-					<Route path="/profile" element={<Profile />} />
+					<Route path="/profile/:tabIndex?" element={<Profile />} />
 				</Routes>
 			</ScrollToTop>
 		</BrowserRouter>

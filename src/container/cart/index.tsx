@@ -15,7 +15,7 @@ import Cookies from "universal-cookie";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BaseButton } from "../../component/button/styled";
 import { formatAmountDisplay } from "../../helper/formatAmountDisplay";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { PriceIcon } from "../../asset";
@@ -26,6 +26,8 @@ import { retrieveAllProductService } from "../../util/product/retrieveAllProduct
 import { useNavigate } from "react-router-dom";
 import { ArrowForward } from "@mui/icons-material";
 import { addProductService } from "../../util/cart/addProduct";
+import { checkoutService } from "../../util/cart/checkout";
+import PaystackPop from "@paystack/inline-js";
 
 export const Cart = () => {
 	const cookies = new Cookies();
@@ -35,7 +37,9 @@ export const Cart = () => {
 	const queryClient = useQueryClient();
 	const { requireAuth } = useRequireAuth();
 	const matches = useMediaQuery("(max-width:250px)");
+	const popupRef = useRef<PaystackPop | null>(null);
 
+	const [isPaying, setIsPaying] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [error, setError] = useState<string | null>(null);
@@ -227,6 +231,47 @@ export const Cart = () => {
 		} finally {
 			setIsLoading(false);
 			setlastClicked(null);
+		}
+	};
+
+	const handleCheckout = async (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+		allProduct: any[] | undefined,
+	) => {
+		e.preventDefault();
+		if (isLoading || isPaying || !allProduct?.length) return;
+		if (!requireAuth(TOKEN)) return;
+		setError(null);
+		setIsPaying(true);
+		try {
+			const response = await checkoutService(TOKEN, allProduct);
+			if (response.status !== "success") {
+				throw new Error(
+					"Action: Checkout processing failed. Please try again.",
+				);
+			}
+			const accessCode = response?.data?.accessCode;
+			if (!accessCode) {
+				throw new Error("Payment could not be initialized.");
+			}
+			const popup = new PaystackPop();
+			popupRef.current = popup;
+			popup.resumeTransaction(accessCode, {
+				onSuccess: () => {
+					navigate(`/profile/1`);
+				},
+				onCancel: () => {
+					setError("Payment was cancelled. You can try again.");
+				},
+				onError: (error) => {
+					setError(`Unable to load payment: ${error.message}`);
+				},
+			});
+		} catch (error: any) {
+			setError(`Checkout processing failed. ${error.message}`);
+			console.error("Remove from cart failed:", error);
+		} finally {
+			setIsPaying(false);
 		}
 	};
 
@@ -597,19 +642,23 @@ export const Cart = () => {
 							disableElevation
 							variant="contained"
 							sx={{ width: "100%" }}
-							// onClick={(e) => handleRemoveFromCart(e, product?.cartId)}
+							onClick={(e) => handleCheckout(e, allProduct)}
 						>
-							<Typography
-								variant={"button"}
-								fontFamily={"inherit"}
-								fontWeight={"inherit"}
-								fontSize={"inherit"}
-								lineHeight={"inherit"}
-								color={"inherit"}
-								textTransform={"inherit"}
-							>
-								Proceed to Payment
-							</Typography>
+							{isPaying ? (
+								<CircularProgress color="inherit" className="loader" />
+							) : (
+								<Typography
+									variant={"button"}
+									fontFamily={"inherit"}
+									fontWeight={"inherit"}
+									fontSize={"inherit"}
+									lineHeight={"inherit"}
+									color={"inherit"}
+									textTransform={"inherit"}
+								>
+									Proceed to Payment
+								</Typography>
+							)}
 						</BaseButton>
 					</Box>
 				</Stack>

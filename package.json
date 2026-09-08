@@ -1,57 +1,59 @@
 {
-  "name": "caretimes-landing",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^7.1.1",
-    "@mui/material": "^7.1.1",
-    "@tanstack/react-query": "^5.90.21",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
-    "@testing-library/user-event": "^13.2.1",
-    "@types/jest": "^27.0.1",
-    "@types/node": "^16.7.13",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-fast-marquee": "^1.6.5",
-    "react-responsive-carousel": "^3.2.23",
-    "react-router-dom": "^7.6.2",
-    "react-router-hash-link": "^2.4.3",
-    "react-scripts": "5.0.1",
-    "typescript": "^4.4.2",
-    "universal-cookie": "^8.0.1",
-    "web-vitals": "^2.1.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "@types/react-router-hash-link": "^2.4.9"
-  }
+	"name": "caretimes-landing",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"@emotion/react": "^11.14.0",
+		"@emotion/styled": "^11.14.0",
+		"@mui/icons-material": "^7.1.1",
+		"@mui/material": "^7.1.1",
+		"@paystack/inline-js": "^2.24.0",
+		"@tanstack/react-query": "^5.90.21",
+		"@testing-library/dom": "^10.4.0",
+		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/react": "^16.1.0",
+		"@testing-library/user-event": "^13.2.1",
+		"@types/jest": "^27.0.1",
+		"@types/node": "^16.7.13",
+		"@types/react": "^19.0.0",
+		"@types/react-dom": "^19.0.0",
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0",
+		"react-fast-marquee": "^1.6.5",
+		"react-responsive-carousel": "^3.2.23",
+		"react-router-dom": "^7.6.2",
+		"react-router-hash-link": "^2.4.3",
+		"react-scripts": "5.0.1",
+		"typescript": "^4.4.2",
+		"universal-cookie": "^8.0.1",
+		"web-vitals": "^2.1.0"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"eslintConfig": {
+		"extends": [
+			"react-app",
+			"react-app/jest"
+		]
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"devDependencies": {
+		"@types/paystack__inline-js": "^1.0.3",
+		"@types/react-router-hash-link": "^2.4.9"
+	}
 }

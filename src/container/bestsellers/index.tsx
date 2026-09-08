@@ -118,8 +118,6 @@ export const BestSellers = () => {
 		);
 	}, [allProduct, categories, activeTabIndex]);
 
-	useEffect(() => console.log(bestSellers), [bestSellers]);
-
 	const handleShowAllClick = (
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 	) => {
