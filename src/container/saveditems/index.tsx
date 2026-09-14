@@ -20,12 +20,14 @@ import { useQuery } from "@tanstack/react-query";
 import { deleteProductService } from "../../util/cart/deleteProduct";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRequireAuth } from "../../helper/requireAuthentication";
 
 export const SavedItems = () => {
 	const cookies = new Cookies();
 	const TOKEN = cookies.getAll().TOKEN;
 
 	const navigate = useNavigate();
+	const { requireAuth } = useRequireAuth();
 	const matches = useMediaQuery("(max-width:250px)");
 
 	const [isLoading, setIsLoading] = useState(false);
@@ -68,6 +70,7 @@ export const SavedItems = () => {
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 	) => {
 		e.stopPropagation();
+		if (!requireAuth(TOKEN)) return;
 		return navigate("/checkout");
 	};
 

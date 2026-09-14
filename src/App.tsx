@@ -8,6 +8,7 @@ import { Checkout } from "./page/checkout";
 import { ProductDetail } from "./page/productdetail";
 import ScrollToTop from "./ScrollToTop";
 import { Profile } from "./page/profile";
+import { NotFoundError } from "./page/notfound";
 
 function App() {
 	return (
@@ -21,6 +22,7 @@ function App() {
 					<Route path="/checkout" element={<Checkout />} />
 					<Route path="/product/:id" element={<ProductDetail />} />
 					<Route path="/profile/:tabIndex?" element={<Profile />} />
+					<Route path="*" element={<NotFoundError />} />
 				</Routes>
 			</ScrollToTop>
 		</BrowserRouter>
