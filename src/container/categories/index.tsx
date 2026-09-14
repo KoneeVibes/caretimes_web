@@ -93,6 +93,7 @@ export const Categories: React.FC<CategoryRef> = ({ categoryRef }) => {
 					showIndicators={false}
 					showThumbs={false}
 					showStatus={false}
+					swipeable={false}
 					renderArrowPrev={(clickHandler, hasPrev, label) => {
 						return (
 							<Box

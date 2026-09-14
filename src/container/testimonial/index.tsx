@@ -40,6 +40,7 @@ export const Testimonial = () => {
 				infiniteLoop={true}
 				interval={2000}
 				showIndicators={false}
+				swipeable={false}
 				showThumbs={false}
 				showStatus={false}
 				renderArrowPrev={(clickHandler, hasPrev, label) => {
