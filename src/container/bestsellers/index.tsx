@@ -18,6 +18,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { addProductService } from "../../util/cart/addProduct";
 import { useRequireAuth } from "../../helper/requireAuthentication";
+import { toast } from "react-toastify";
 
 export const BestSellers = () => {
 	// convert this to a state and manage update for price/categories field
@@ -70,10 +71,12 @@ export const BestSellers = () => {
 			queryClient.invalidateQueries({
 				queryKey: ["products-in-cart-with-categories", TOKEN],
 			});
+			toast.success("Product added to cart successfully!");
 		},
 		onError: (error: any) => {
 			setIsLoading(false);
 			setError(`Add to cart failed. ${error.message}`);
+			toast.error(`Add to cart failed. ${error.message}`);
 		},
 	});
 

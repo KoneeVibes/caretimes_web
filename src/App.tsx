@@ -9,10 +9,12 @@ import { ProductDetail } from "./page/productdetail";
 import ScrollToTop from "./ScrollToTop";
 import { Profile } from "./page/profile";
 import { NotFoundError } from "./page/notfound";
+import { ToastContainer } from "react-toastify";
 
 function App() {
 	return (
 		<BrowserRouter>
+			<ToastContainer />
 			<ScrollToTop>
 				<Routes>
 					<Route path="/" element={<Home />} />

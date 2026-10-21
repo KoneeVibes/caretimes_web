@@ -26,6 +26,7 @@ import { addProductService } from "../../util/cart/addProduct";
 import { useRequireAuth } from "../../helper/requireAuthentication";
 import { ArrowForward, ArrowBack } from "@mui/icons-material";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export const Products = () => {
 	const resourceCount = [1, 10, 20];
@@ -95,10 +96,12 @@ export const Products = () => {
 			queryClient.invalidateQueries({
 				queryKey: ["products-in-cart-with-categories", TOKEN],
 			});
+			toast.success("Product added to cart successfully!");
 		},
 		onError: (error: any) => {
 			setIsLoading(false);
 			setError(`Add to cart failed. ${error.message}`);
+			toast.error(`Add to cart failed. ${error.message}`);
 		},
 	});
 

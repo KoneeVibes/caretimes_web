@@ -28,6 +28,7 @@ import { ArrowForward } from "@mui/icons-material";
 import { addProductService } from "../../util/cart/addProduct";
 import { checkoutService } from "../../util/cart/checkout";
 import PaystackPop from "@paystack/inline-js";
+import { toast } from "react-toastify";
 
 export const Cart = () => {
 	const cookies = new Cookies();
@@ -117,10 +118,12 @@ export const Cart = () => {
 			queryClient.invalidateQueries({
 				queryKey: ["products-in-cart-with-categories", TOKEN],
 			});
+			toast.success("Product added to cart successfully!");
 		},
 		onError: (error: any) => {
 			setIsLoading(false);
 			setError(`Add to cart failed. ${error.message}`);
+			toast.error(`Add to cart failed. ${error.message}`);
 		},
 	});
 
@@ -143,9 +146,11 @@ export const Cart = () => {
 			queryClient.invalidateQueries({
 				queryKey: ["products-in-cart-with-categories", TOKEN],
 			});
+			toast.success("Cart updated successfully!");
 		},
 		onError: (error: any) => {
 			setError(`Cart update failed. ${error.message}`);
+			toast.error(`Cart update failed. ${error.message}`);
 		},
 	});
 
@@ -224,9 +229,11 @@ export const Cart = () => {
 			if (response.status !== "success") {
 				throw new Error("Action: Remove from cart failed. Please try again.");
 			}
+			toast.success("Product removed from cart successfully!");
 			// setIsAlertModalOpen(true);
 		} catch (error: any) {
 			setError(`Remove from cart failed. ${error.message}`);
+			toast.error(`Remove from cart failed. ${error.message}`);
 			console.error("Remove from cart failed:", error);
 		} finally {
 			setIsLoading(false);
@@ -246,6 +253,7 @@ export const Cart = () => {
 		try {
 			const response = await checkoutService(TOKEN, allProduct);
 			if (response.status !== "success") {
+				toast.error(`Checkout processing failed. Please try again.`);
 				throw new Error(
 					"Action: Checkout processing failed. Please try again.",
 				);
@@ -269,7 +277,8 @@ export const Cart = () => {
 			});
 		} catch (error: any) {
 			setError(`Checkout processing failed. ${error.message}`);
-			console.error("Remove from cart failed:", error);
+			toast.error(`Checkout processing failed. ${error.message}`);
+			console.error("Checkout processing failed:", error);
 		} finally {
 			setIsPaying(false);
 		}

@@ -21,6 +21,7 @@ import { BaseButton } from "../../component/button/styled";
 import { useRequireAuth } from "../../helper/requireAuthentication";
 import Cookies from "universal-cookie";
 import { updateProductService } from "../../util/cart/updateProduct";
+import { toast } from "react-toastify";
 
 export const ProductDescription = () => {
 	const cookies = new Cookies();
@@ -101,10 +102,12 @@ export const ProductDescription = () => {
 			queryClient.invalidateQueries({
 				queryKey: ["products-in-cart-with-categories", TOKEN],
 			});
+			toast.success("Product added to cart successfully!");
 		},
 		onError: (error: any) => {
 			setIsLoading(false);
 			setError(`Add to cart failed. ${error.message}`);
+			toast.error(`Add to cart failed. ${error.message}`);
 		},
 	});
 

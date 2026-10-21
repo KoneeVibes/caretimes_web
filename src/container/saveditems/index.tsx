@@ -21,6 +21,7 @@ import { deleteProductService } from "../../util/cart/deleteProduct";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRequireAuth } from "../../helper/requireAuthentication";
+import { toast } from "react-toastify";
 
 export const SavedItems = () => {
 	const cookies = new Cookies();
@@ -87,9 +88,11 @@ export const SavedItems = () => {
 			if (response.status !== "success") {
 				throw new Error("Action: Remove from cart failed. Please try again.");
 			}
+			toast.success("Product removed from cart successfully!");
 			// setIsAlertModalOpen(true);
 		} catch (error: any) {
 			setError(`Remove from cart failed. ${error.message}`);
+			toast.error(`Remove from cart failed. ${error.message}`);
 			console.error("Remove from cart failed:", error);
 		} finally {
 			setIsLoading(false);

@@ -53,6 +53,7 @@ export const AuthenticationFormModal = () => {
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 	) => {
 		e.stopPropagation();
+		setError(null);
 		setIsAuthenticationFormModalOpen((prev) => ({
 			status: true,
 			index: prev.index - 1,
