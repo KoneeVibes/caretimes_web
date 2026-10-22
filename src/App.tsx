@@ -11,6 +11,7 @@ import { Profile } from "./page/profile";
 import { NotFoundError } from "./page/notfound";
 import { ToastContainer } from "react-toastify";
 import { OrderDetail } from "./page/orderdetail";
+import { RouteProtector } from "./config/routeProtector";
 
 function App() {
 	return (
@@ -19,13 +20,15 @@ function App() {
 			<ScrollToTop>
 				<Routes>
 					<Route path="/" element={<Home />} />
-					<Route path="/product" element={<Product />} />
 					<Route path="/about" element={<About />} />
+					<Route path="/product" element={<Product />} />
 					<Route path="/contact/:id?" element={<Contact />} />
-					<Route path="/checkout" element={<Checkout />} />
 					<Route path="/product/:id" element={<ProductDetail />} />
-					<Route path="/profile/:tabIndex?" element={<Profile />} />
-					<Route path="/order/:id" element={<OrderDetail />} />
+					<Route element={<RouteProtector />}>
+						<Route path="/profile/:tabIndex?" element={<Profile />} />
+						<Route path="/order/:id" element={<OrderDetail />} />
+						<Route path="/checkout" element={<Checkout />} />
+					</Route>
 					<Route path="*" element={<NotFoundError />} />
 				</Routes>
 			</ScrollToTop>
