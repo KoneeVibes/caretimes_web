@@ -321,7 +321,11 @@ export const Cart = () => {
 									<Box component={"div"} className="product-thumbnail-box">
 										<img src={product?.images?.[0]} alt={product?.name} />
 									</Box>
-									<Stack gap={"calc(var(--flex-gap)/8)"}>
+									<Stack
+										flex={1}
+										overflow={"hidden"}
+										gap={"calc(var(--flex-gap)/8)"}
+									>
 										<Box>
 											<Typography
 												variant="caption"

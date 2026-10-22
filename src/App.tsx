@@ -10,6 +10,7 @@ import ScrollToTop from "./ScrollToTop";
 import { Profile } from "./page/profile";
 import { NotFoundError } from "./page/notfound";
 import { ToastContainer } from "react-toastify";
+import { OrderDetail } from "./page/orderdetail";
 
 function App() {
 	return (
@@ -24,6 +25,7 @@ function App() {
 					<Route path="/checkout" element={<Checkout />} />
 					<Route path="/product/:id" element={<ProductDetail />} />
 					<Route path="/profile/:tabIndex?" element={<Profile />} />
+					<Route path="/order/:id" element={<OrderDetail />} />
 					<Route path="*" element={<NotFoundError />} />
 				</Routes>
 			</ScrollToTop>

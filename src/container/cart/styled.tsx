@@ -20,12 +20,15 @@ export const CartWrapper = styled(Stack)(({ theme }) => {
 					padding: "calc(var(--basic-padding)/4)",
 					border: "1px solid var(--border-faint-primary-color)",
 					"& .cart-product-description": {
+						flex: 1,
+						overflow: "hidden",
 						gap: "calc(var(--flex-gap)/3)",
 						"& .product-thumbnail-box": {
 							height: "11.25rem",
 							display: "flex",
 							overflow: "hidden",
 							borderRadius: "10px",
+							flex: 1,
 							"& img": {
 								width: "100%",
 								height: "100%",

@@ -8,9 +8,13 @@ import { retrieveLoggedInUserService } from "../../util/usermanagement/retrieveL
 import { ProfileFormModal } from "../forms/profile";
 import { useNavigate, useParams } from "react-router-dom";
 import { signOutUserService } from "../../util/authentication/signOut";
+import { retrieveAllOrderService } from "../../util/order/retrieveAllOrder";
+import { formatAmountDisplay } from "../../helper/formatAmountDisplay";
+import { BaseButton } from "../../component/button/styled";
+import { ArrowBack } from "@mui/icons-material";
 
 export const ProfileArea = () => {
-	const tabKeys = ["User Profile", "Transactions", "Log Out"];
+	const tabKeys = ["User Profile", "Orders", "Log Out"];
 
 	const cookies = new Cookies();
 	const TOKEN = cookies.getAll().TOKEN;
@@ -28,10 +32,18 @@ export const ProfileArea = () => {
 		const loggedInUser = await retrieveLoggedInUserService(TOKEN);
 		return loggedInUser;
 	};
-
 	const { data: profile } = useQuery({
 		queryKey: ["profile", TOKEN, user],
 		queryFn: () => fetchLoggedInUser(),
+	});
+
+	const fetchAllOrder = async () => {
+		const allOrder = await retrieveAllOrderService(TOKEN);
+		return allOrder;
+	};
+	const { data: orders } = useQuery({
+		queryKey: ["orders", TOKEN, user],
+		queryFn: () => fetchAllOrder(),
 	});
 
 	const handleLogOutUser = async () => {
@@ -93,6 +105,14 @@ export const ProfileArea = () => {
 	const handleCloseFormModal = () => {
 		setActiveForm(null);
 		return setUser(null);
+	};
+
+	const handleNavigateToOrderDetails = (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+		orderId: string,
+	) => {
+		e.preventDefault();
+		return navigate(`/order/${orderId}`);
 	};
 
 	return (
@@ -415,7 +435,7 @@ export const ProfileArea = () => {
 											handleOpenFormModal(e, "personal-information")
 										}
 									>
-										Edit Personal Information
+										Edit Personal Details
 									</Typography>
 								</Box>
 							</Stack>
@@ -619,6 +639,165 @@ export const ProfileArea = () => {
 									</Typography>
 								</Box>
 							</Stack>
+						</Fragment>
+					)}
+					{activeTab === tabKeys[1] && (
+						<Fragment>
+							{orders?.map((order: Record<string, any>, index: number) => (
+								<Stack key={index} className="order-card">
+									<Stack className="order-description">
+										<Box component={"div"} className="product-thumbnail-box">
+											<img
+												src={order?.cartItems[0]?.productImages?.[0]}
+												alt={order?.cartItems[0]?.productName}
+											/>
+										</Box>
+										<Stack
+											flex={1}
+											overflow={"hidden"}
+											gap={"calc(var(--flex-gap)/8)"}
+										>
+											<Box>
+												<Typography
+													variant="caption"
+													fontFamily={"Inter"}
+													fontWeight={600}
+													fontSize={12}
+													lineHeight={"normal"}
+													whiteSpace={"normal"}
+													color={"var(--subtitle-gray-color)"}
+													display={"inline-block"}
+													width={"100%"}
+												>
+													{order?.cartItems?.length ?? 0} items across
+													categories -{" "}
+													{Array.from(
+														new Set(
+															order?.cartItems?.map(
+																(item: Record<string, any>) =>
+																	item?.productCategory,
+															),
+														),
+													).join(", ")}
+												</Typography>
+												<Typography
+													variant="h3"
+													component={"h3"}
+													fontFamily={"Inter"}
+													fontWeight={600}
+													fontSize={16}
+													lineHeight={"normal"}
+													whiteSpace={"normal"}
+													sx={{ cursor: "pointer" }}
+													color={"var(--off-primary-color)"}
+												>
+													#{order?.transactionReference || "NA"}
+												</Typography>
+											</Box>
+											<Box>
+												{/* <Stack
+                                                                        direction="row"
+                                                                        gap={"calc(var(--flex-gap)/32)"}
+                                                                        marginBlockEnd={"calc(var(--basic-margin)/16)"}
+                                                                        overflow={"hidden"}
+                                                                    >
+                                                                        {[...Array(5)].map((_, i) => (
+                                                                            <Fragment key={i}>
+                                                                                {i < product?.rating ? (
+                                                                                    <StarIcon
+                                                                                        sx={{
+                                                                                            color: "var(--active-rating-color)",
+                                                                                            fontSize: 20,
+                                                                                        }}
+                                                                                    />
+                                                                                ) : (
+                                                                                    <StarBorderIcon
+                                                                                        sx={{
+                                                                                            color: "var(--subtitle-gray-color)",
+                                                                                            fontSize: 20,
+                                                                                        }}
+                                                                                    />
+                                                                                )}
+                                                                            </Fragment>
+                                                                        ))}
+                                                                    </Stack> */}
+												<Typography
+													variant="caption"
+													fontFamily={"Inter"}
+													fontWeight={600}
+													fontSize={16}
+													lineHeight={"normal"}
+													whiteSpace={"normal"}
+													color={"var(--off-primary-color)"}
+													display={"inline-block"}
+													width={"100%"}
+												>
+													{`₦${formatAmountDisplay(order?.totalPayable || 0)}`}
+												</Typography>
+											</Box>
+										</Stack>
+									</Stack>
+									<Stack className="order-item-call-to-action">
+										<Box sx={{ display: "flex", overflow: "hidden" }}>
+											<BaseButton
+												disableElevation
+												startIcon={<ArrowBack />}
+												colour="var(--primary-color)"
+												onClick={(e) =>
+													handleNavigateToOrderDetails(e, order?.id)
+												}
+												sx={{
+													padding: "0 !important",
+													border: "none",
+													"&:hover": { border: "none" },
+												}}
+											>
+												<Typography
+													variant={"button"}
+													fontFamily={"inherit"}
+													fontWeight={"inherit"}
+													fontSize={"inherit"}
+													lineHeight={"inherit"}
+													color={"inherit"}
+													textTransform={"inherit"}
+												>
+													See Details
+												</Typography>
+											</BaseButton>
+										</Box>
+										<Box
+											sx={{
+												display: "flex",
+												overflow: "hidden",
+												justifyContent: "center",
+												padding:
+													"calc(var(--basic-padding)/9.5) calc(var(--basic-padding)/5.5)",
+												borderRadius: "8px",
+												background:
+													order?.status === "fulfilled"
+														? "var(--in-stock-green-color)"
+														: order?.status === "paid"
+															? "var(--active-rating-color)"
+															: "var(--error-red-color)",
+											}}
+										>
+											<Typography
+												variant="caption"
+												fontFamily={"Inter"}
+												fontWeight={500}
+												fontSize={14}
+												textAlign={"center"}
+												lineHeight={"normal"}
+												whiteSpace={"normal"}
+												textTransform={"capitalize"}
+												color={"var(--light-color)"}
+											>
+												{order?.status || "NA"}
+											</Typography>
+										</Box>
+									</Stack>
+								</Stack>
+							))}
 						</Fragment>
 					)}
 				</Stack>

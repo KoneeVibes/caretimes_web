@@ -75,6 +75,33 @@ export const ProfileAreaWrapper = styled(Stack)(({ theme }) => {
 						},
 					},
 				},
+				"& .order-card": {
+					borderRadius: "12px",
+					gap: "calc(var(--flex-gap)/3)",
+					justifyContent: "space-between",
+					padding: "calc(var(--basic-padding)/4)",
+					border: "1px solid var(--border-faint-primary-color)",
+					"& .order-description": {
+						flex: 1,
+						overflow: "hidden",
+						gap: "calc(var(--flex-gap)/3)",
+						"& .product-thumbnail-box": {
+							height: "11.25rem",
+							display: "flex",
+							overflow: "hidden",
+							borderRadius: "10px",
+							flex: 1,
+							"& img": {
+								width: "100%",
+								height: "100%",
+								borderRadius: "inherit",
+							},
+						},
+					},
+					"& .order-item-call-to-action": {
+						gap: "calc(var(--flex-gap)/4)",
+					},
+				},
 			},
 		},
 		[theme.breakpoints.up(200)]: {
@@ -103,6 +130,11 @@ export const ProfileAreaWrapper = styled(Stack)(({ theme }) => {
 						"& .user-info": {
 							flexDirection: "row",
 							overflow: "hidden",
+						},
+					},
+					"& .order-card": {
+						"& .order-description": {
+							flexDirection: "row",
 						},
 					},
 				},
@@ -134,6 +166,9 @@ export const ProfileAreaWrapper = styled(Stack)(({ theme }) => {
 						"& .delivery-information": {
 							overflow: "visible",
 						},
+					},
+					"& .order-card": {
+						flexDirection: "row",
 					},
 				},
 			},
