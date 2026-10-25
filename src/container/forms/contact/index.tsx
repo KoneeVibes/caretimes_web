@@ -7,6 +7,8 @@ import { BaseInput } from "../../../component/form/input/styled";
 import { useEffect, useState } from "react";
 import { BaseButton } from "../../../component/button/styled";
 import { useParams } from "react-router-dom";
+import emailjs from "@emailjs/browser";
+import { toast } from "react-toastify";
 
 export const ContactForm = () => {
 	type FormDetails = typeof initialFormDetails;
@@ -14,13 +16,14 @@ export const ContactForm = () => {
 
 	const initialFormDetails = {
 		fullName: "",
+		email: "",
 		businessName: "",
 		phone: "",
 		businessAddress: "",
 		nearestLandmark: "",
 		informationSource: "",
 		additionalInfo: "",
-		reasonForContact: "",
+		termsAndCondition: false,
 	};
 
 	const { id } = useParams();
@@ -29,8 +32,8 @@ export const ContactForm = () => {
 		id === "sales" || id === "support" ? id : "support",
 	);
 
-	const [isLoading] = useState(false);
-	const [error] = useState<string | null>(null);
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 	const [formDetails, setFormDetails] =
 		useState<Partial<FormDetails>>(initialFormDetails);
 
@@ -44,16 +47,22 @@ export const ContactForm = () => {
 			cards.forEach((card) => card.classList.remove("active"));
 			e.currentTarget.classList.add("active");
 		}
+		setFormDetails((prev) => ({
+			...prev,
+			termsAndCondition: false,
+		}));
 		setActiveFormType(formType);
 	};
 
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 	) => {
-		const { name, value } = e.target;
+		const target = e.target;
+		const { name, value } = target;
+		const isChecked = "checked" in target ? target.checked : false;
 		setFormDetails((prev) => ({
 			...prev,
-			[name]: value,
+			[name]: ["termsAndCondition"].includes(name) ? isChecked : value,
 		}));
 	};
 
@@ -61,17 +70,55 @@ export const ContactForm = () => {
 		setActiveFormType(id === "sales" ? "sales" : "support");
 	}, [id]);
 
-	// const getPayload = () => {
-	// 	if (activeFormType === "sales") {
-	// 		return formDetails;
-	// 	}
-	// 	return {
-	// 		fullName: formDetails.fullName,
-	// 		phone: formDetails.phone,
-	// 		additionalInfo: formDetails.additionalInfo,
-	// 		reasonForContact: formDetails.reasonForContact,
-	// 	};
-	// };
+	const handleFormSubmission = async (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+	) => {
+		e.preventDefault();
+		setError(null);
+		setIsLoading(true);
+
+		const serviceId = process.env.REACT_APP_EMAILJS_SERVICE_ID;
+		const publicKey = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
+		const generalInquiryTemplateId =
+			process.env.REACT_APP_EMAILJS_GENERAL_INQUIRY_TEMPLATE_ID;
+		const partnershipInquiryTemplateId =
+			process.env.REACT_APP_EMAILJS_PARTNERSHIP_INQUIRY_TEMPLATE_ID;
+
+		if (
+			!serviceId ||
+			!publicKey ||
+			!generalInquiryTemplateId ||
+			!partnershipInquiryTemplateId
+		) {
+			setIsLoading(false);
+			toast.error(`Email service wrongly configured. Contact administrator`);
+			setError("Email service wrongly configured. Contact administrator");
+			return;
+		}
+
+		if (!formDetails.termsAndCondition) {
+			setIsLoading(false);
+			toast.error(`Cannot proceed without agreeing to terms and conditions`);
+			setError("Cannot proceed without agreeing to terms and conditions");
+			return;
+		}
+
+		const templateId =
+			activeFormType === "sales"
+				? partnershipInquiryTemplateId
+				: generalInquiryTemplateId;
+
+		try {
+			await emailjs.send(serviceId, templateId, formDetails, publicKey);
+			toast.success("Inquiry sent successfully!");
+		} catch (error: any) {
+			console.error(error);
+			toast.error(`Form submission failed. ${error.message}`);
+			setError(`Form submission failed. ${error.message}`);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	return (
 		<ContactFormWrapper>
@@ -173,18 +220,27 @@ export const ContactForm = () => {
 						onChange={(e) => handleChange(e)}
 					/>
 				</BaseFieldSet>
-				{activeFormType === "sales" && (
-					<BaseFieldSet>
-						<BaseLabel>Business Name</BaseLabel>
-						<BaseInput
-							required
-							name="businessName"
-							value={formDetails.businessName}
-							placeholder="Enter your business name"
-							onChange={(e) => handleChange(e)}
-						/>
-					</BaseFieldSet>
-				)}
+				<BaseFieldSet>
+					<BaseLabel className="required">Email</BaseLabel>
+					<BaseInput
+						required
+						name="email"
+						type="email"
+						value={formDetails.email}
+						placeholder="Enter your email address"
+						onChange={(e) => handleChange(e)}
+					/>
+				</BaseFieldSet>
+				<BaseFieldSet>
+					<BaseLabel>Business Name</BaseLabel>
+					<BaseInput
+						required
+						name="businessName"
+						value={formDetails.businessName}
+						placeholder="Enter your business name"
+						onChange={(e) => handleChange(e)}
+					/>
+				</BaseFieldSet>
 				<BaseFieldSet>
 					<BaseLabel className="required">Phone Number</BaseLabel>
 					<BaseInput
@@ -234,11 +290,15 @@ export const ContactForm = () => {
 				)}
 				<BaseFieldSet>
 					<BaseLabel
-						fontweight={600}
-						fontsize="20px"
-						colour="var(--dark-color)"
+						{...(activeFormType === "sales"
+							? {
+									fontweight: 600,
+									fontsize: "20px",
+									colour: "var(--dark-color)",
+								}
+							: {})}
 					>
-						Any additional note
+						{activeFormType === "sales" ? "Any additional note" : "Message"}
 					</BaseLabel>
 					<BaseInput
 						multiline
@@ -252,9 +312,11 @@ export const ContactForm = () => {
 					<BaseFieldSet>
 						<BaseInput
 							type="checkbox"
-							name="informationSource"
-							value={formDetails.informationSource}
-							placeholder="Enter how you heard about us"
+							name="termsAndCondition"
+							inputProps={{
+								checked: formDetails.termsAndCondition,
+							}}
+							value={formDetails.termsAndCondition}
 							onChange={(e) => handleChange(e)}
 							sx={{
 								padding: 0,
@@ -290,7 +352,7 @@ export const ContactForm = () => {
 						fontWeight={"600"}
 						fontSize={14}
 						lineHeight={"normal"}
-						color={"var(--text-salmon-pink-color)"}
+						color={"var(--error-red-color)"}
 						whiteSpace={"normal"}
 					>
 						{error}
@@ -308,6 +370,7 @@ export const ContactForm = () => {
 					fontsize={"17px"}
 					fontweight={400}
 					padding="calc(var(--basic-padding)/4) calc(var(--basic-padding)/3)"
+					onClick={handleFormSubmission}
 				>
 					{isLoading ? (
 						<CircularProgress color="inherit" className="loader" />

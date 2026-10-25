@@ -1,5 +1,6 @@
 import {
 	Box,
+	CircularProgress,
 	SelectChangeEvent,
 	Stack,
 	Typography,
@@ -17,6 +18,7 @@ import { footerLinks, socialMedia } from "../../config/static";
 import { useNavigate } from "react-router-dom";
 import { useRequireAuth } from "../../helper/requireAuthentication";
 import Cookies from "universal-cookie";
+import { toast } from "react-toastify";
 
 export const Footer = () => {
 	const cookies = new Cookies();
@@ -26,6 +28,7 @@ export const Footer = () => {
 	const { requireAuth } = useRequireAuth();
 	const matches = useMediaQuery("(max-width:200px)");
 
+	const [isLoading, setIsLoading] = useState(false);
 	const [formDetails, setFormDetails] = useState({
 		email: "",
 	});
@@ -57,6 +60,45 @@ export const Footer = () => {
 			if (!requireAuth(TOKEN)) return;
 		}
 		return navigate(item.url);
+	};
+
+	const handleSubscribe = async (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+	) => {
+		e.preventDefault();
+		setIsLoading(true);
+
+		const FORM_ID = process.env.REACT_APP_CONVERTKIT_FORM_ID;
+		if (!FORM_ID) {
+			setIsLoading(false);
+			toast.error(
+				`Newsletter service wrongly configured. Contact administrator`,
+			);
+			return;
+		}
+
+		try {
+			const formData = new FormData();
+			formData.append("email_address", formDetails.email);
+			const response = await fetch(
+				`https://app.kit.com/forms/${FORM_ID}/subscriptions`,
+				{
+					method: "POST",
+					body: formData,
+				},
+			);
+			if (!response.ok) {
+				toast.error(`Something went wrong. Contact administrator`);
+				return;
+			}
+			toast.success("Thanks! Check your inbox to confirm.");
+			setFormDetails((prev) => ({ ...prev, email: "" }));
+		} catch (err) {
+			toast.error(`Something went wrong. Contact administrator`);
+			console.error(err);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -152,8 +194,28 @@ export const Footer = () => {
 									</BaseFieldSet>
 								</Box>
 								<Box sx={{ display: "flex", overflow: "hidden" }}>
-									<BaseButton disableElevation variant="contained">
-										Submit
+									<BaseButton
+										type="submit"
+										disableElevation
+										variant="contained"
+										disabled={isLoading}
+										onClick={handleSubscribe}
+									>
+										{isLoading ? (
+											<CircularProgress color="inherit" className="loader" />
+										) : (
+											<Typography
+												variant={"button"}
+												fontFamily={"inherit"}
+												fontWeight={"inherit"}
+												fontSize={"inherit"}
+												lineHeight={"inherit"}
+												color={"inherit"}
+												textTransform={"inherit"}
+											>
+												Submit
+											</Typography>
+										)}
 									</BaseButton>
 								</Box>
 							</form>
