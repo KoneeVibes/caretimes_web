@@ -91,7 +91,7 @@
 	.search-result-content-modal .MuiDialog-paper {
 		border-radius: 16px;
 		max-width: 21.813rem;
-		max-height: 80vh;
+		max-height: 50vh;
 		width: -webkit-fill-available;
 		overflow: hidden;
 		position: fixed;
