@@ -42,7 +42,7 @@
 		--basic-padding: 4.75rem;
 		--basic-margin: 4.75rem;
 		--flex-gap: 4.75rem;
-		--mobile-nav-height: 20.1rem;
+		--mobile-nav-height: 8.19rem;
 	}
 
 	* {
@@ -86,5 +86,30 @@
 		max-width: 49.625rem;
 		max-height: 38.4375rem;
 		width: -webkit-fill-available;
+	}
+
+	.search-result-content-modal .MuiDialog-paper {
+		border-radius: 16px;
+		max-width: 21.813rem;
+		max-height: 30.875rem;
+		width: -webkit-fill-available;
+		overflow: hidden;
+		position: fixed;
+		top: var(--mobile-nav-height);
+		left: calc(var(--basic-margin) / 2);
+		right: calc(var(--basic-margin) / 2);
+		margin: 0;
+	}
+}
+
+@media screen and (min-width: 425px) {
+	.search-result-content-modal .MuiDialog-paper {
+		left: auto;
+	}
+}
+
+@media screen and (min-width: 768px) {
+	.search-result-content-modal .MuiDialog-paper {
+		right: calc(var(--basic-margin));
 	}
 }

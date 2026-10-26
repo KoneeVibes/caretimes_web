@@ -13,6 +13,7 @@ export const AppContextProvider: React.FC<ContextProviderPropsType> = ({
 	] = useState(true);
 	const [isAuthenticationFormModalOpen, setIsAuthenticationFormModalOpen] =
 		useState({ status: false, index: 0 });
+	const [isContentModalOpen, setIsContentModalOpen] = useState(false);
 
 	return (
 		<AppContext.Provider
@@ -23,6 +24,8 @@ export const AppContextProvider: React.FC<ContextProviderPropsType> = ({
 				setIsAuthenticationMethodSelectionModalOpen,
 				isAuthenticationFormModalOpen,
 				setIsAuthenticationFormModalOpen,
+				isContentModalOpen,
+				setIsContentModalOpen,
 			}}
 		>
 			{children}

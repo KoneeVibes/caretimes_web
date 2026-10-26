@@ -17,6 +17,8 @@ export type ContextType = {
 			index: number;
 		}>
 	>;
+	isContentModalOpen: boolean;
+	setIsContentModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type ContextProviderPropsType = {

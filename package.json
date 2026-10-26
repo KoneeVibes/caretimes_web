@@ -28,6 +28,7 @@
 		"react-toastify": "^11.1.0",
 		"typescript": "^4.4.2",
 		"universal-cookie": "^8.0.1",
+		"use-debounce": "^10.1.1",
 		"web-vitals": "^2.1.0"
 	},
 	"scripts": {
