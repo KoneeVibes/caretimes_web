@@ -218,11 +218,20 @@ export const Navigation = () => {
 		});
 	};
 
+	const handleNavigateToAllProducts = (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+	) => {
+		setIsContentModalOpen(false);
+		return navigate("/product");
+	};
+
 	const handleSearchResultModalCallToActionClick = (
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 	) => {
 		e.stopPropagation();
-		handleNext(e);
+		debouncedQueryRef && searchResult && searchResult?.data?.length >= 1
+			? handleNext(e)
+			: handleNavigateToAllProducts(e);
 		return;
 	};
 
@@ -455,9 +464,9 @@ export const Navigation = () => {
 				handleClose={handleSearchResultContentModalClose}
 				handleCallToAction={handleSearchResultModalCallToActionClick}
 				callToAction={
-					searchResult && searchResult?.data?.length < 1
-						? "View All Products"
-						: `View More Results (${searchResult?.pagination?.page ?? 0}/${searchResult?.pagination?.totalPages ?? 0})`
+					debouncedQueryRef && searchResult && searchResult?.data?.length >= 1
+						? `View More Results (${searchResult?.pagination?.page ?? 0}/${searchResult?.pagination?.totalPages ?? 0})`
+						: "View All Products"
 				}
 			/>
 			<AuthenticationFormModal />
