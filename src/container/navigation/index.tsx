@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { NavigationWrapper } from "./styled";
 import logo from "../../asset/logo.png";
+import emptyState from "../../asset/image/empty-search-state.svg";
 import { useNavigate } from "react-router-dom";
 import { navCallToActions, navLinks } from "../../config/static";
 import { HashLink } from "react-router-hash-link";
@@ -283,7 +284,7 @@ export const Navigation = () => {
 			gap={"calc(var(--flex-gap)/3)"}
 			padding={"0 calc(var(--basic-padding)/4)"}
 		>
-			{searchResult &&
+			{debouncedQueryRef && searchResult && searchResult?.data?.length >= 1 ? (
 				searchResult?.data?.map((product, index) => (
 					<Stack
 						key={index}
@@ -423,7 +424,35 @@ export const Navigation = () => {
 							</BaseButton>
 						</Box>
 					</Stack>
-				))}
+				))
+			) : (
+				<Stack overflow={"hidden"} gap={"calc(var(--flex-gap)/8)"}>
+					<Box
+						sx={{
+							display: "flex",
+							overflow: "hidden",
+							justifyContent: "center",
+							padding: "calc(var(--basic-padding)/4)",
+						}}
+					>
+						<img src={emptyState} alt="empty state" />
+					</Box>
+					<Box>
+						<Typography
+							variant="body1"
+							fontFamily={"Inter"}
+							fontWeight={500}
+							fontSize={14}
+							lineHeight={"normal"}
+							whiteSpace={"normal"}
+							color={"var(--text-gray-color)"}
+							textAlign={"center"}
+						>
+							No Results, try again
+						</Typography>
+					</Box>
+				</Stack>
+			)}
 		</Stack>
 	);
 

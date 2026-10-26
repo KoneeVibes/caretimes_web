@@ -79,7 +79,7 @@ export const WhatWeDo = () => {
 						color={"inherit"}
 						textTransform={"inherit"}
 					>
-						View Store Locations
+						Inquire Of Physical Locations
 					</Typography>
 				</BaseButton>
 			</Box>

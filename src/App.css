@@ -71,7 +71,7 @@
 	.authentication-form-modal .MuiDialog-paper {
 		border-radius: 0 0 15px 15px;
 		max-width: 29.5rem;
-		max-height: 45rem;
+		max-height: 95vh;
 		width: -webkit-fill-available;
 		overflow: hidden;
 		position: fixed;
@@ -84,14 +84,14 @@
 		overflow: hidden;
 		border-radius: 15px;
 		max-width: 49.625rem;
-		max-height: 38.4375rem;
+		max-height: 80vh;
 		width: -webkit-fill-available;
 	}
 
 	.search-result-content-modal .MuiDialog-paper {
 		border-radius: 16px;
 		max-width: 21.813rem;
-		max-height: 30.875rem;
+		max-height: 80vh;
 		width: -webkit-fill-available;
 		overflow: hidden;
 		position: fixed;

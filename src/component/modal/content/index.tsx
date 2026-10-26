@@ -68,30 +68,31 @@ export const BaseContentModal: React.FC<ContentModalPropsType> = ({
 					>
 						<BaseButton
 							radius={"64px"}
+							disabled={isLoading}
 							variant={"outlined"}
 							onClick={handleCallToAction}
-							padding="calc(var(--basic-padding)/5)"
+							padding="calc(var(--basic-padding)/16) calc(var(--basic-padding)/5)"
 							border={"1px solid var(--border-primary-color)"}
 							sx={{ width: { mobile: "100%", miniTablet: "auto" } }}
 							endIcon={
-								<ArrowDownward sx={{ color: "var(--off-primary-color)" }} />
+								isLoading ? (
+									<CircularProgress color="inherit" className="loader" />
+								) : (
+									<ArrowDownward sx={{ color: "var(--off-primary-color)" }} />
+								)
 							}
 						>
-							{isLoading ? (
-								<CircularProgress color="inherit" className="loader" />
-							) : (
-								<Typography
-									variant={"button"}
-									fontFamily={"inherit"}
-									fontWeight={"inherit"}
-									fontSize={"inherit"}
-									lineHeight={"inherit"}
-									textTransform={"inherit"}
-									color={"var(--off-primary-color)"}
-								>
-									{callToAction}
-								</Typography>
-							)}
+							<Typography
+								variant={"button"}
+								fontFamily={"inherit"}
+								fontWeight={"inherit"}
+								fontSize={"inherit"}
+								lineHeight={"inherit"}
+								textTransform={"inherit"}
+								color={"var(--off-primary-color)"}
+							>
+								{callToAction}
+							</Typography>
 						</BaseButton>
 					</Box>
 				)}
