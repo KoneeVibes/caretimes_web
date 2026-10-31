@@ -550,6 +550,7 @@ export const Navigation = () => {
 								placeholder="Search Products"
 								value={formDetails.productName}
 								onChange={(e) => handleChange(e)}
+								onFocus={keepMenuOpen}
 								padding="calc(var(--basic-padding)/7.6) 0"
 								endAdornment={
 									<SearchIcon
