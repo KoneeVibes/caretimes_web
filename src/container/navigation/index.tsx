@@ -129,7 +129,10 @@ export const Navigation = () => {
 		},
 	});
 
-	const handleLogoClick = () => {
+	const handleLogoClick = (
+		e: React.MouseEvent<HTMLImageElement, MouseEvent>,
+	) => {
+		e.stopPropagation();
 		setOpenMenu(false);
 		navigate("/");
 	};
@@ -148,10 +151,6 @@ export const Navigation = () => {
 
 	const handleAuthenticationMethodSelectionModalClose = () => {
 		return setIsAuthenticationMethodSelectionModalOpen(false);
-	};
-
-	const keepMenuOpen = (e: React.SyntheticEvent) => {
-		e.stopPropagation();
 	};
 
 	const handleSearchResultContentModalOpen = (
@@ -505,7 +504,7 @@ export const Navigation = () => {
 			{/* Modals above */}
 
 			<Box component={"div"} className="favicon-box">
-				<img src={logo} alt="logo" onClick={handleLogoClick} />
+				<img src={logo} alt="logo" onClick={(e) => handleLogoClick(e)} />
 			</Box>
 			<Stack className="nav-items">
 				<Stack className="nav-links">
@@ -515,7 +514,10 @@ export const Navigation = () => {
 								key={index}
 								to={navLink.url}
 								smooth={true}
-								onClick={() => setOpenMenu(false)}
+								onClick={(e) => {
+									e.stopPropagation();
+									setOpenMenu(false);
+								}}
 							>
 								<Typography
 									variant="subtitle1"
@@ -534,13 +536,7 @@ export const Navigation = () => {
 						);
 					})}
 				</Stack>
-				<Box
-					component={"div"}
-					onClick={keepMenuOpen}
-					onMouseDown={keepMenuOpen}
-					onTouchStart={keepMenuOpen}
-					className="nav-search-field-box"
-				>
+				<Box component={"div"} className="nav-search-field-box">
 					<form onSubmit={handleSearchResultContentModalOpen}>
 						<BaseFieldSet>
 							<BaseInput
@@ -550,7 +546,6 @@ export const Navigation = () => {
 								placeholder="Search Products"
 								value={formDetails.productName}
 								onChange={(e) => handleChange(e)}
-								onFocus={keepMenuOpen}
 								padding="calc(var(--basic-padding)/7.6) 0"
 								endAdornment={
 									<SearchIcon
