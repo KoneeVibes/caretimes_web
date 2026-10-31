@@ -5,6 +5,7 @@ import {
 	SelectChangeEvent,
 	Stack,
 	Typography,
+	useMediaQuery,
 } from "@mui/material";
 import { NavigationWrapper } from "./styled";
 import logo from "../../asset/logo.png";
@@ -47,6 +48,7 @@ export const Navigation = () => {
 		setIsAuthenticationMethodSelectionModalOpen,
 		setIsAuthenticationFormModalOpen,
 	} = useContext(AppContext);
+	const matches = useMediaQuery("(min-width:1280px)");
 
 	const [searchResult, setSearchResult] = useState<{
 		data: Record<string, any>[];
@@ -75,6 +77,12 @@ export const Navigation = () => {
 			document.body.style.overflow = "visible";
 		}
 	}, [openMenu]);
+
+	useEffect(() => {
+		if (matches) {
+			setOpenMenu(false);
+		}
+	}, [matches, setOpenMenu]);
 
 	useEffect(() => {
 		if (!debouncedQueryRef) return setSearchResult(null);
@@ -596,7 +604,10 @@ export const Navigation = () => {
 						color: "var(--light-color)",
 						padding: 0,
 					}}
-					onClick={() => setOpenMenu(!openMenu)}
+					onClick={(e) => {
+						e.stopPropagation();
+						setOpenMenu(!openMenu);
+					}}
 				>
 					<MenuIcon />
 				</IconButton>
