@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { navCallToActions, navLinks } from "../../config/static";
 import { HashLink } from "react-router-hash-link";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context";
 import { BaseFieldSet } from "../../component/form/fieldset/styled";
 import { BaseInput } from "../../component/form/input/styled";
@@ -47,8 +47,6 @@ export const Navigation = () => {
 		setIsAuthenticationMethodSelectionModalOpen,
 		setIsAuthenticationFormModalOpen,
 	} = useContext(AppContext);
-
-	const searchInputRef = useRef<HTMLInputElement>(null);
 
 	const [searchResult, setSearchResult] = useState<{
 		data: Record<string, any>[];
@@ -152,12 +150,17 @@ export const Navigation = () => {
 		return setIsAuthenticationMethodSelectionModalOpen(false);
 	};
 
+	const keepMenuOpen = (e: React.SyntheticEvent) => {
+		e.stopPropagation();
+	};
+
 	const handleSearchResultContentModalOpen = (
 		e:
 			| React.FormEvent<HTMLFormElement>
 			| React.MouseEvent<SVGSVGElement, MouseEvent>,
 	) => {
 		e.preventDefault();
+		e.stopPropagation();
 		return setIsContentModalOpen(true);
 	};
 
@@ -531,14 +534,19 @@ export const Navigation = () => {
 						);
 					})}
 				</Stack>
-				<Box component={"div"} className="nav-search-field-box">
+				<Box
+					component={"div"}
+					onClick={keepMenuOpen}
+					onMouseDown={keepMenuOpen}
+					onTouchStart={keepMenuOpen}
+					className="nav-search-field-box"
+				>
 					<form onSubmit={handleSearchResultContentModalOpen}>
 						<BaseFieldSet>
 							<BaseInput
 								radius="0"
 								border="none"
 								name="productName"
-								inputRef={searchInputRef}
 								placeholder="Search Products"
 								value={formDetails.productName}
 								onChange={(e) => handleChange(e)}
