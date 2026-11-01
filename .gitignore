@@ -24,3 +24,5 @@ yarn-debug.log*
 yarn-error.log*
 
 .htaccess
+yarn.lock
+package-lock.json
