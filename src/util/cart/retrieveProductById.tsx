@@ -1,9 +1,13 @@
 const BASE_ENDPOINT = process.env.REACT_APP_BASE_API;
 
-export const retrieveProductByIdService = async (token: string, id: string) => {
+export const retrieveProductByIdService = async (
+	token: string,
+	productId: string,
+	cartId?: string,
+) => {
 	try {
 		const response = await fetch(
-			`${BASE_ENDPOINT}/api/v1/customer-interface/cart/single/${id}`,
+			`${BASE_ENDPOINT}/api/v1/customer-interface/cart/single/${productId}${cartId?.trim() ? `/${cartId.trim()}` : ""}`,
 			{
 				method: "GET",
 				headers: {

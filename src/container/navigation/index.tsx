@@ -266,6 +266,7 @@ export const Navigation = () => {
 			default:
 				break;
 		}
+		return openMenu ? setOpenMenu(!openMenu) : null;
 	};
 
 	const authMethodSelectionBody = (

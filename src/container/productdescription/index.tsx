@@ -34,6 +34,7 @@ export const ProductDescription = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [formDetails, setFormDetails] = useState({
+		cartId: null,
 		quantity: "0",
 	});
 
@@ -42,8 +43,10 @@ export const ProductDescription = () => {
 			if (!id.trim()) return;
 			try {
 				const product = await retrieveProductFromCartById(TOKEN, id);
+				console.log(product);
 				setFormDetails((prev) => ({
 					...prev,
+					cartId: product?.id ? product.id : null,
 					quantity: product?.quantity ? product.quantity.toString() : "0",
 				}));
 			} catch (error) {
@@ -96,7 +99,13 @@ export const ProductDescription = () => {
 	};
 
 	const addToCartMutation = useMutation({
-		mutationFn: (id: string) => updateProductService(TOKEN, id, formDetails),
+		mutationFn: ({
+			productId,
+			cartId,
+		}: {
+			productId: string;
+			cartId?: string | null;
+		}) => updateProductService(TOKEN, productId, formDetails, cartId ?? ""),
 		onSuccess: () => {
 			setIsLoading(false);
 			queryClient.invalidateQueries({
@@ -120,7 +129,10 @@ export const ProductDescription = () => {
 			return setError("User not authenticated or invalid product ID.");
 		setError(null);
 		setIsLoading(true);
-		addToCartMutation.mutate(product.id);
+		addToCartMutation.mutate({
+			productId: product.id,
+			cartId: formDetails?.cartId,
+		});
 	};
 
 	return (

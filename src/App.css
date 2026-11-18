@@ -66,6 +66,7 @@
 		max-width: 28rem;
 		width: -webkit-fill-available;
 		overflow: hidden;
+		outline: none;
 	}
 
 	.authentication-form-modal .MuiDialog-paper {
@@ -78,6 +79,7 @@
 		top: 0;
 		right: 0;
 		margin: 0;
+		outline: none;
 	}
 
 	.profile-form-modal .MuiDialog-paper {
@@ -86,6 +88,7 @@
 		max-width: 49.625rem;
 		max-height: 80vh;
 		width: -webkit-fill-available;
+		outline: none;
 	}
 
 	.search-result-content-modal .MuiDialog-paper {
@@ -99,6 +102,7 @@
 		left: calc(var(--basic-margin) / 2);
 		right: calc(var(--basic-margin) / 2);
 		margin: 0;
+		outline: none;
 	}
 }
 

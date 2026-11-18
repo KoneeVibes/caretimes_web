@@ -7,6 +7,7 @@ export const CartWrapper = styled(Stack)(({ theme }) => {
 		padding:
 			"calc(var(--basic-padding)/2) calc(var(--basic-padding)/2) calc(var(--basic-padding)/1.5)",
 		"& .main-area": {
+			overflow: "hidden",
 			gap: "calc(var(--flex-gap)/3)",
 			paddingBottom: "calc(var(--basic-padding)/4)",
 			"& .main-area-LHS": {

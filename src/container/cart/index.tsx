@@ -41,6 +41,7 @@ export const Cart = () => {
 	const popupRef = useRef<PaystackPop | null>(null);
 
 	const [isPaying, setIsPaying] = useState(false);
+	const [isCreatingOrder, setIsCreatingOrder] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [error, setError] = useState<string | null>(null);
@@ -129,18 +130,25 @@ export const Cart = () => {
 
 	const manageQuantityMutation = useMutation({
 		mutationFn: ({
+			cartId,
 			productId,
 			price,
 			quantity,
 		}: {
+			cartId: string;
 			productId: string;
 			price: number;
 			quantity: number;
 		}) => {
-			return updateProductService(TOKEN, productId, {
-				price,
-				quantity,
-			});
+			return updateProductService(
+				TOKEN,
+				productId,
+				{
+					price,
+					quantity,
+				},
+				cartId,
+			);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
@@ -173,6 +181,7 @@ export const Cart = () => {
 				return;
 		}
 		manageQuantityMutation.mutate({
+			cartId: cartItem.id,
 			productId: cartItem.product,
 			price: cartItem.price,
 			quantity: qty,
@@ -244,43 +253,53 @@ export const Cart = () => {
 	const handleCheckout = async (
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 		allProduct: any[] | undefined,
+		paymentOption: "instant" | "on-delivery",
 	) => {
 		e.preventDefault();
-		if (isLoading || isPaying || !allProduct?.length) return;
+		if (isLoading || isPaying || isCreatingOrder || !allProduct?.length) return;
 		if (!requireAuth(TOKEN)) return;
 		setError(null);
-		setIsPaying(true);
+		paymentOption === "instant" ? setIsPaying(true) : setIsCreatingOrder(true);
 		try {
-			const response = await checkoutService(TOKEN, allProduct);
+			const response = await checkoutService(TOKEN, allProduct, {
+				paymentOption,
+			});
 			if (response.status !== "success") {
 				toast.error(`Checkout processing failed. Please try again.`);
 				throw new Error(
 					"Action: Checkout processing failed. Please try again.",
 				);
 			}
-			const accessCode = response?.data?.accessCode;
-			if (!accessCode) {
-				throw new Error("Payment could not be initialized.");
+			if (paymentOption === "instant") {
+				const accessCode = response?.data?.accessCode;
+				if (!accessCode) {
+					throw new Error("Payment could not be initialized.");
+				}
+				const popup = new PaystackPop();
+				popupRef.current = popup;
+				popup.resumeTransaction(accessCode, {
+					onSuccess: () => {
+						navigate(`/profile/1`);
+					},
+					onCancel: () => {
+						setError("Payment was cancelled. You can try again.");
+					},
+					onError: (error) => {
+						setError(`Unable to load payment: ${error.message}`);
+					},
+				});
+			} else {
+				await toast.success("Cart checked out successfully!");
+				navigate(`/profile/1`);
 			}
-			const popup = new PaystackPop();
-			popupRef.current = popup;
-			popup.resumeTransaction(accessCode, {
-				onSuccess: () => {
-					navigate(`/profile/1`);
-				},
-				onCancel: () => {
-					setError("Payment was cancelled. You can try again.");
-				},
-				onError: (error) => {
-					setError(`Unable to load payment: ${error.message}`);
-				},
-			});
 		} catch (error: any) {
 			setError(`Checkout processing failed. ${error.message}`);
 			toast.error(`Checkout processing failed. ${error.message}`);
 			console.error("Checkout processing failed:", error);
 		} finally {
-			setIsPaying(false);
+			paymentOption === "instant"
+				? setIsPaying(false)
+				: setIsCreatingOrder(false);
 		}
 	};
 
@@ -403,6 +422,7 @@ export const Cart = () => {
 											<IconButton
 												onClick={(e) =>
 													manageQuantity(e, "decrement", {
+														id: product?.cartId,
 														product: product?.id,
 														quantity: product?.quantity,
 														price: product?.unitPrice,
@@ -450,6 +470,7 @@ export const Cart = () => {
 											<IconButton
 												onClick={(e) =>
 													manageQuantity(e, "increment", {
+														id: product?.cartId,
 														product: product?.id,
 														quantity: product?.quantity,
 														price: product?.unitPrice,
@@ -500,10 +521,10 @@ export const Cart = () => {
 				</Stack>
 				<Stack className="main-area-RHS">
 					<Stack direction={"row"} gap={"calc(var(--flex-gap)/8)"}>
-						<Box>
+						<Box overflow={"hidden"}>
 							<PriceIcon />
 						</Box>
-						<Box>
+						<Box overflow={"hidden"}>
 							<Typography
 								variant="h4"
 								fontFamily={"Inter"}
@@ -523,7 +544,7 @@ export const Cart = () => {
 						gap={"calc(var(--flex-gap)/8)"}
 						justifyContent={"space-between"}
 					>
-						<Box>
+						<Box overflow={"hidden"}>
 							<Typography
 								variant="subtitle1"
 								fontFamily={"Inter"}
@@ -537,7 +558,7 @@ export const Cart = () => {
 								Subtotal
 							</Typography>
 						</Box>
-						<Box>
+						<Box overflow={"hidden"}>
 							<Typography
 								variant="body1"
 								fontFamily={"Inter"}
@@ -557,7 +578,7 @@ export const Cart = () => {
 						gap={"calc(var(--flex-gap)/8)"}
 						justifyContent={"space-between"}
 					>
-						<Box>
+						<Box overflow={"hidden"}>
 							<Typography
 								variant="subtitle1"
 								fontFamily={"Inter"}
@@ -571,7 +592,7 @@ export const Cart = () => {
 								Delivery Charge
 							</Typography>
 						</Box>
-						<Box>
+						<Box overflow={"hidden"}>
 							<Typography
 								variant="body1"
 								fontFamily={"Inter"}
@@ -589,7 +610,7 @@ export const Cart = () => {
 						gap={"calc(var(--flex-gap)/8)"}
 						justifyContent={"space-between"}
 					>
-						<Box>
+						<Box overflow={"hidden"}>
 							<Typography
 								variant="subtitle1"
 								fontFamily={"Inter"}
@@ -603,7 +624,7 @@ export const Cart = () => {
 								Delivery Period
 							</Typography>
 						</Box>
-						<Box>
+						<Box overflow={"hidden"}>
 							<Typography
 								variant="body1"
 								fontFamily={"Inter"}
@@ -621,7 +642,7 @@ export const Cart = () => {
 						gap={"calc(var(--flex-gap)/8)"}
 						justifyContent={"space-between"}
 					>
-						<Box>
+						<Box overflow={"hidden"}>
 							<Typography
 								variant="subtitle1"
 								fontFamily={"Inter"}
@@ -635,7 +656,7 @@ export const Cart = () => {
 								Total Cost
 							</Typography>
 						</Box>
-						<Box>
+						<Box overflow={"hidden"}>
 							<Typography
 								variant="body1"
 								fontFamily={"Inter"}
@@ -650,30 +671,72 @@ export const Cart = () => {
 							</Typography>
 						</Box>
 					</Stack>
-					<Box sx={{ display: "flex", overflow: "hidden" }}>
-						<BaseButton
-							disableElevation
-							variant="contained"
-							sx={{ width: "100%" }}
-							onClick={(e) => handleCheckout(e, allProduct)}
-						>
-							{isPaying ? (
-								<CircularProgress color="inherit" className="loader" />
-							) : (
-								<Typography
-									variant={"button"}
-									fontFamily={"inherit"}
-									fontWeight={"inherit"}
-									fontSize={"inherit"}
-									lineHeight={"inherit"}
-									color={"inherit"}
-									textTransform={"inherit"}
+					<Stack gap={"calc(var(--flex-gap)/8)"}>
+						<Box sx={{ display: "flex", overflow: "hidden" }}>
+							<BaseButton
+								disableElevation
+								variant="contained"
+								sx={{ width: "100%" }}
+								onClick={(e) => handleCheckout(e, allProduct, "instant")}
+							>
+								{isPaying ? (
+									<CircularProgress color="inherit" className="loader" />
+								) : (
+									<Typography
+										variant={"button"}
+										fontFamily={"inherit"}
+										fontWeight={"inherit"}
+										fontSize={"inherit"}
+										lineHeight={"inherit"}
+										color={"inherit"}
+										textTransform={"inherit"}
+									>
+										Pay Now
+									</Typography>
+								)}
+							</BaseButton>
+						</Box>
+						{Number(totalCartPrice) >= 100 && (
+							<Box sx={{ display: "flex", overflow: "hidden" }}>
+								<BaseButton
+									disableElevation
+									variant="outlined"
+									sx={{ width: "100%" }}
+									colour="var(--primary-color)"
+									onClick={(e) => handleCheckout(e, allProduct, "on-delivery")}
 								>
-									Proceed to Payment
-								</Typography>
-							)}
-						</BaseButton>
-					</Box>
+									{isCreatingOrder ? (
+										<CircularProgress color="inherit" className="loader" />
+									) : (
+										<Typography
+											variant={"button"}
+											fontFamily={"inherit"}
+											fontWeight={"inherit"}
+											fontSize={"inherit"}
+											lineHeight={"inherit"}
+											color={"inherit"}
+											textTransform={"inherit"}
+										>
+											Pay on Delivery
+										</Typography>
+									)}
+								</BaseButton>
+							</Box>
+						)}
+						<Box>
+							<Typography
+								fontFamily={"Inter"}
+								fontWeight={"600"}
+								fontSize={14}
+								lineHeight={"normal"}
+								color={"var(--error-red-color)"}
+								whiteSpace={"normal"}
+								textAlign={"center"}
+							>
+								Pay on delivery is available only for orders above NGN 100.00
+							</Typography>
+						</Box>
+					</Stack>
 				</Stack>
 			</Stack>
 			<Box borderBottom={"1px solid var(--border-off-primary-color)"} />

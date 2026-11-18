@@ -3,11 +3,12 @@ const BASE_ENDPOINT = process.env.REACT_APP_BASE_API;
 export const updateProductService = async (
 	token: string,
 	productId: string,
-	payload: any
+	payload: any,
+	cartId?: string,
 ) => {
 	try {
 		const response = await fetch(
-			`${BASE_ENDPOINT}/api/v1/customer-interface/cart/${productId}/update-product`,
+			`${BASE_ENDPOINT}/api/v1/customer-interface/cart/${productId}/${cartId?.trim() ? `${cartId.trim()}/` : ""}update-product`,
 			{
 				method: "PATCH",
 				headers: {
@@ -15,7 +16,7 @@ export const updateProductService = async (
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify(payload),
-			}
+			},
 		);
 		const res = await response.json();
 		if (!response.ok) {

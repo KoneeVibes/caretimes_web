@@ -16,12 +16,13 @@ import Cookies from "universal-cookie";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatAmountDisplay } from "../../helper/formatAmountDisplay";
 import { useRequireAuth } from "../../helper/requireAuthentication";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { addProductService } from "../../util/cart/addProduct";
 import { toast } from "react-toastify";
 import { retrieveOrderByIdService } from "../../util/order/retrieveOrderById";
 import { formatDate } from "../../helper/formatDate";
 import { downloadTransactionReceiptService } from "../../util/transaction/downloadTransactionReceipt";
+import { retrieveBankAccountByOrderIdService } from "../../util/temporarybankaccount/retrieveBankAccountByOrderId";
 
 export const Order = () => {
 	const cookies = new Cookies();
@@ -34,6 +35,12 @@ export const Order = () => {
 	const matches = useMediaQuery("(max-width:250px)");
 
 	const [isLoading, setIsLoading] = useState(false);
+	const [bankAccount, setBankAccount] = useState({
+		bankName: "",
+		accountName: "",
+		accountNumber: "",
+		expiresAt: "",
+	});
 	const [isDownloading, setIsDownloading] = useState(false);
 	const [lastClicked, setlastClicked] = useState<string | null>(null);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -73,6 +80,21 @@ export const Order = () => {
 		queryKey: ["found-order", TOKEN],
 		queryFn: async () => {
 			const response = await retrieveOrderByIdService(TOKEN, id);
+			try {
+				const bankAccount = await retrieveBankAccountByOrderIdService(
+					TOKEN,
+					response?.id,
+				);
+				setBankAccount((prev) => ({
+					...prev,
+					expiresAt: bankAccount.expiresAt,
+					bankName: bankAccount.bankName,
+					accountName: bankAccount.accountName,
+					accountNumber: bankAccount.accountNumber,
+				}));
+			} catch (error) {
+				console.error("Error fetching bank account for order:", error);
+			}
 			return response;
 		},
 		enabled: Boolean(id.trim()),
@@ -177,64 +199,209 @@ export const Order = () => {
 			</Box>
 			<Stack className="main-area">
 				<Stack className="title-area">
-					<Stack className="header">
-						<Box>
-							<Typography
-								variant="h3"
-								component={"h3"}
-								fontFamily={"Inter"}
-								fontWeight={600}
-								fontSize={20}
-								lineHeight={"normal"}
-								whiteSpace={"normal"}
-								color={"var(--off-dark-color)"}
-							>
-								Order No. {foundOrder?.transactionReference}
-							</Typography>
-						</Box>
-						<Box>
-							<Typography
-								variant="subtitle1"
-								fontFamily={"Inter"}
-								fontWeight={500}
-								fontSize={18}
-								lineHeight={"normal"}
-								whiteSpace={"normal"}
-								color={"var(--text-gray-color)"}
-							>
-								{foundOrder?.cartItems?.length} items
-							</Typography>
-						</Box>
+					<Stack className="order-details">
+						<Stack className="header">
+							<Box>
+								<Typography
+									variant="h3"
+									component={"h3"}
+									fontFamily={"Inter"}
+									fontWeight={600}
+									fontSize={20}
+									lineHeight={"normal"}
+									whiteSpace={"normal"}
+									color={"var(--off-dark-color)"}
+								>
+									Order No. {foundOrder?.transactionReference}
+								</Typography>
+							</Box>
+							<Box>
+								<Typography
+									variant="subtitle1"
+									fontFamily={"Inter"}
+									fontWeight={500}
+									fontSize={18}
+									lineHeight={"normal"}
+									whiteSpace={"normal"}
+									color={"var(--text-gray-color)"}
+								>
+									{foundOrder?.cartItems?.length} items
+								</Typography>
+							</Box>
+						</Stack>
+						<Stack className="description">
+							<Box>
+								<Typography
+									variant="body1"
+									fontFamily={"Inter"}
+									fontWeight={500}
+									fontSize={18}
+									lineHeight={"normal"}
+									whiteSpace={"normal"}
+									color={"var(--text-gray-color)"}
+								>
+									Placed on: {formatDate(foundOrder?.createdAt, true)}
+								</Typography>
+							</Box>
+							<Box>
+								<Typography
+									variant="body1"
+									fontFamily={"Inter"}
+									fontWeight={500}
+									fontSize={18}
+									lineHeight={"normal"}
+									whiteSpace={"normal"}
+									color={"var(--text-gray-color)"}
+								>
+									Total:{" "}
+									{`₦${formatAmountDisplay(foundOrder?.totalPayable || 0)}`}
+								</Typography>
+							</Box>
+						</Stack>
 					</Stack>
-					<Stack className="description">
-						<Box>
-							<Typography
-								variant="body1"
-								fontFamily={"Inter"}
-								fontWeight={500}
-								fontSize={18}
-								lineHeight={"normal"}
-								whiteSpace={"normal"}
-								color={"var(--text-gray-color)"}
-							>
-								Placed on: {formatDate(foundOrder?.createdAt, true)}
-							</Typography>
-						</Box>
-						<Box>
-							<Typography
-								variant="body1"
-								fontFamily={"Inter"}
-								fontWeight={500}
-								fontSize={18}
-								lineHeight={"normal"}
-								whiteSpace={"normal"}
-								color={"var(--text-gray-color)"}
-							>
-								Total:{" "}
-								{`₦${formatAmountDisplay(foundOrder?.totalPayable || 0)}`}
-							</Typography>
-						</Box>
-					</Stack>
+					{foundOrder?.paymentOption === "on-delivery" && (
+						<Fragment>
+							<Box component={"div"} className="detail-separator" />
+							{!bankAccount?.expiresAt ||
+							new Date(bankAccount?.expiresAt ?? "").getTime() < Date.now() ? (
+								<Box component={"div"} className="bank-details">
+									<Typography
+										variant="body1"
+										fontFamily={"Inter"}
+										fontWeight={500}
+										fontSize={18}
+										lineHeight={"normal"}
+										whiteSpace={"normal"}
+										color={"var(--text-gray-color)"}
+									>
+										Account details is expired at this time. Kindly contact
+										support to initiate payment.
+									</Typography>
+								</Box>
+							) : (
+								<Stack className="bank-details">
+									<Box component={"div"} className="header">
+										<Typography
+											variant="h3"
+											component={"h3"}
+											fontFamily={"Inter"}
+											fontWeight={600}
+											fontSize={20}
+											lineHeight={"normal"}
+											whiteSpace={"normal"}
+											color={"var(--off-dark-color)"}
+										>
+											Bank Information
+										</Typography>
+									</Box>
+									<Stack className="description">
+										<Box>
+											<Typography
+												variant="body1"
+												fontFamily={"Inter"}
+												fontWeight={500}
+												fontSize={18}
+												lineHeight={"normal"}
+												whiteSpace={"normal"}
+												color={"var(--text-gray-color)"}
+											>
+												For on-delivery orders only, make transfer to account
+												details below. Bank account expires on{" "}
+												{formatDate(bankAccount?.expiresAt, true) ?? ""}
+											</Typography>
+										</Box>
+										<Box>
+											<Typography
+												variant="body1"
+												fontFamily={"Inter"}
+												fontWeight={700}
+												fontSize={18}
+												lineHeight={"normal"}
+												whiteSpace={"normal"}
+												color={"var(--text-gray-color)"}
+											>
+												Bank Name:{" "}
+												<Typography
+													component="span"
+													fontSize={"inherit"}
+													fontFamily={"inherit"}
+													fontWeight={500}
+													lineHeight={"inherit"}
+													whiteSpace={"inherit"}
+													color={"inherit"}
+												>
+													{bankAccount?.bankName ?? ""}
+												</Typography>
+											</Typography>
+										</Box>
+										<Box>
+											<Typography
+												variant="body1"
+												fontFamily={"Inter"}
+												fontWeight={700}
+												fontSize={18}
+												lineHeight={"normal"}
+												whiteSpace={"normal"}
+												color={"var(--text-gray-color)"}
+											>
+												Account Name:{" "}
+												<Typography
+													component="span"
+													fontSize={"inherit"}
+													fontFamily={"inherit"}
+													fontWeight={500}
+													lineHeight={"inherit"}
+													whiteSpace={"inherit"}
+													color={"inherit"}
+												>
+													{bankAccount?.accountName ?? ""}
+												</Typography>
+											</Typography>
+										</Box>
+										<Box>
+											<Typography
+												variant="body1"
+												fontFamily={"Inter"}
+												fontWeight={700}
+												fontSize={18}
+												lineHeight={"normal"}
+												whiteSpace={"normal"}
+												color={"var(--text-gray-color)"}
+											>
+												Account Number:{" "}
+												<Typography
+													component="span"
+													fontSize={"inherit"}
+													fontFamily={"inherit"}
+													fontWeight={500}
+													lineHeight={"inherit"}
+													whiteSpace={"inherit"}
+													color={"inherit"}
+												>
+													{bankAccount?.accountNumber ?? "Hello"}
+												</Typography>
+											</Typography>
+										</Box>
+										{foundOrder?.status === "disputed" && (
+											<Box>
+												<Typography
+													fontFamily={"Inter"}
+													fontWeight={"600"}
+													fontSize={14}
+													lineHeight={"normal"}
+													color={"var(--error-red-color)"}
+													whiteSpace={"normal"}
+												>
+													Please retry using the exact amount of{" "}
+													{`₦${formatAmountDisplay(foundOrder?.totalPayable || 0)}`}
+												</Typography>
+											</Box>
+										)}
+									</Stack>
+								</Stack>
+							)}
+						</Fragment>
+					)}
 				</Stack>
 				<Stack className="order-items-area">
 					<Stack className="header">
@@ -266,9 +433,11 @@ export const Order = () => {
 									background:
 										foundOrder?.status === "fulfilled"
 											? "var(--in-stock-green-color)"
-											: foundOrder?.status === "paid"
+											: ["paid", "delivered"].includes(foundOrder?.status)
 												? "var(--active-rating-color)"
-												: "var(--error-red-color)",
+												: ["on-delivery"].includes(foundOrder?.paymentOption)
+													? "var(--text-gray-color)"
+													: "var(--error-red-color)",
 								}}
 							>
 								<Typography
@@ -278,41 +447,44 @@ export const Order = () => {
 									fontSize={14}
 									textAlign={"center"}
 									lineHeight={"normal"}
-									whiteSpace={"normal"}
 									textTransform={"capitalize"}
 									color={"var(--light-color)"}
 								>
-									{foundOrder?.status}
+									{["instant"].includes(foundOrder?.paymentOption)
+										? foundOrder?.status
+										: "Pay on Delivery"}
 								</Typography>
 							</Box>
 						</Stack>
-						<Box sx={{ display: "flex", overflow: "hidden" }}>
-							<BaseButton
-								disableElevation
-								colour="var(--in-stock-green-color)"
-								onClick={(e) =>
-									handleDownloadReceipt(e, foundOrder?.transactionReference)
-								}
-								sx={{
-									padding: "0 !important",
-									border: "none",
-									"&:hover": { border: "none" },
-								}}
-							>
-								<Typography
-									variant={"button"}
-									fontFamily={"inherit"}
-									fontWeight={"inherit"}
-									fontSize={"inherit"}
-									lineHeight={"inherit"}
-									color={"inherit"}
-									textTransform={"inherit"}
-									sx={{ textDecoration: "underline" }}
+						{["paid", "fulfilled"].includes(foundOrder?.status) && (
+							<Box sx={{ display: "flex", overflow: "hidden" }}>
+								<BaseButton
+									disableElevation
+									colour="var(--in-stock-green-color)"
+									onClick={(e) =>
+										handleDownloadReceipt(e, foundOrder?.transactionReference)
+									}
+									sx={{
+										padding: "0 !important",
+										border: "none",
+										"&:hover": { border: "none" },
+									}}
 								>
-									Download Receipt
-								</Typography>
-							</BaseButton>
-						</Box>
+									<Typography
+										variant={"button"}
+										fontFamily={"inherit"}
+										fontWeight={"inherit"}
+										fontSize={"inherit"}
+										lineHeight={"inherit"}
+										color={"inherit"}
+										textTransform={"inherit"}
+										sx={{ textDecoration: "underline" }}
+									>
+										Download Receipt
+									</Typography>
+								</BaseButton>
+							</Box>
+						)}
 					</Stack>
 					<Stack className="items">
 						{foundOrder?.cartItems?.map(

@@ -177,7 +177,7 @@ export const Footer = () => {
 								className="registration-form"
 								onSubmit={handleNewsletterRegistration}
 							>
-								<Box>
+								<Box sx={{ overflow: "hidden" }}>
 									<BaseFieldSet>
 										<BaseInput
 											name="email"

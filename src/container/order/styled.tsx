@@ -7,16 +7,31 @@ export const OrderWrapper = styled(Stack)(({ theme }) => {
 		padding:
 			"calc(var(--basic-padding)/2) calc(var(--basic-padding)/2) calc(var(--basic-padding)/1.5)",
 		"& .main-area": {
+			overflow: "hidden",
 			gap: "calc(var(--flex-gap)/3)",
 			paddingBottom: "calc(var(--basic-padding)/4)",
 			"& .title-area": {
 				borderRadius: "8px",
-				gap: "calc(var(--flex-gap)/3)",
-				padding: "calc(var(--basic-padding)/4)",
 				border: "1px solid var(--subtitle-gray-color)",
 				overflow: "hidden",
-				"& .description": {
-					gap: "calc(var(--flex-gap)/9)",
+				"& .order-details": {
+					flex: 1,
+					overflow: "hidden",
+					padding: "calc(var(--basic-padding)/4)",
+					"& .description": {
+						gap: "calc(var(--flex-gap)/9)",
+					},
+				},
+				"& .bank-details": {
+					flex: 1,
+					overflow: "hidden",
+					padding: "calc(var(--basic-padding)/4)",
+					"& .description": {
+						gap: "calc(var(--flex-gap)/9)",
+					},
+				},
+				"& .detail-separator": {
+					borderInline: "1px solid var(--subtitle-gray-color)",
 				},
 			},
 			"& .order-items-area": {
@@ -30,7 +45,9 @@ export const OrderWrapper = styled(Stack)(({ theme }) => {
 					gap: "calc(var(--flex-gap)/3)",
 					alignItems: "flex-start",
 					justifyContent: "space-between",
+					overflow: "hidden",
 					"& .title": {
+						width: "100%",
 						gap: "calc(var(--flex-gap)/9)",
 					},
 				},
@@ -91,6 +108,9 @@ export const OrderWrapper = styled(Stack)(({ theme }) => {
 			padding:
 				"calc(var(--basic-padding)/2) calc(var(--basic-padding)) calc(var(--basic-padding)/1.5)",
 			"& .main-area": {
+				"& .title-area": {
+					flexDirection: "row",
+				},
 				"& .order-items-area": {
 					"& .header": {
 						flexDirection: "row",

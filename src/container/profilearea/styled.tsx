@@ -99,7 +99,9 @@ export const ProfileAreaWrapper = styled(Stack)(({ theme }) => {
 						},
 					},
 					"& .order-item-call-to-action": {
+						flex: "0 1 30%",
 						gap: "calc(var(--flex-gap)/4)",
+						overflow: "hidden",
 					},
 				},
 			},
@@ -191,6 +193,11 @@ export const ProfileAreaWrapper = styled(Stack)(({ theme }) => {
 						},
 						"& .delivery-information": {
 							overflow: "hidden",
+						},
+					},
+					"& .order-card": {
+						"& .order-item-call-to-action": {
+							flex: "0 1 20%",
 						},
 					},
 				},

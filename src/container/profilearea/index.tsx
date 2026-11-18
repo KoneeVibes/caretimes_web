@@ -60,6 +60,22 @@ export const ProfileArea = () => {
 		}
 	};
 
+	const getOrderStatusLabel = (order: Record<string, any>) => {
+		if (order.paymentOption === "instant") return order.status || "NA";
+		if (order.paymentOption === "on-delivery") {
+			if (order.status === "delivered") return "Arrived";
+			if (
+				order.status &&
+				["paid", "disputed", "cancelled", "fulfilled", "disputed"].includes(
+					order.status,
+				)
+			)
+				return order.status;
+			return "Pay on Delivery";
+		}
+		return "NA";
+	};
+
 	const handleTabClick = (
 		e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
 		tabKey: string,
@@ -776,9 +792,14 @@ export const ProfileArea = () => {
 												background:
 													order?.status === "fulfilled"
 														? "var(--in-stock-green-color)"
-														: order?.status === "paid"
+														: ["paid", "delivered"].includes(order?.status)
 															? "var(--active-rating-color)"
-															: "var(--error-red-color)",
+															: ["on-delivery"].includes(
+																		order?.paymentOption,
+																  ) &&
+																  !["paid", "delivered"].includes(order?.status)
+																? "var(--text-gray-color)"
+																: "var(--error-red-color)",
 											}}
 										>
 											<Typography
@@ -788,11 +809,10 @@ export const ProfileArea = () => {
 												fontSize={14}
 												textAlign={"center"}
 												lineHeight={"normal"}
-												whiteSpace={"normal"}
 												textTransform={"capitalize"}
 												color={"var(--light-color)"}
 											>
-												{order?.status || "NA"}
+												{getOrderStatusLabel(order)}
 											</Typography>
 										</Box>
 									</Stack>
