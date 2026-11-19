@@ -169,6 +169,7 @@ export const Cart = () => {
 	) => {
 		e.preventDefault();
 		if (!requireAuth(TOKEN)) return;
+		if (!cartItem?.id) return;
 		let qty: number;
 		switch (action) {
 			case "increment":
