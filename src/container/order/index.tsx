@@ -117,6 +117,22 @@ export const Order = () => {
 		},
 	});
 
+	const getOrderStatusLabel = (order: Record<string, any>) => {
+		if (order?.paymentOption === "instant") return order?.status || "NA";
+		if (order?.paymentOption === "on-delivery") {
+			if (order?.status === "delivered") return "Arrived";
+			if (
+				order?.status &&
+				["paid", "disputed", "cancelled", "fulfilled", "disputed"].includes(
+					order?.status,
+				)
+			)
+				return order?.status;
+			return "Pay on Delivery";
+		}
+		return "NA";
+	};
+
 	const handleNavigateToProductDetail = (
 		e:
 			| React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -435,7 +451,8 @@ export const Order = () => {
 											? "var(--in-stock-green-color)"
 											: ["paid", "delivered"].includes(foundOrder?.status)
 												? "var(--active-rating-color)"
-												: ["on-delivery"].includes(foundOrder?.paymentOption)
+												: ["on-delivery"].includes(foundOrder?.paymentOption) &&
+													  !["paid", "delivered"].includes(foundOrder?.status)
 													? "var(--text-gray-color)"
 													: "var(--error-red-color)",
 								}}
@@ -450,9 +467,7 @@ export const Order = () => {
 									textTransform={"capitalize"}
 									color={"var(--light-color)"}
 								>
-									{["instant"].includes(foundOrder?.paymentOption)
-										? foundOrder?.status
-										: "Pay on Delivery"}
+									{getOrderStatusLabel(foundOrder)}
 								</Typography>
 							</Box>
 						</Stack>

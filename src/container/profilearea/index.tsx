@@ -61,16 +61,16 @@ export const ProfileArea = () => {
 	};
 
 	const getOrderStatusLabel = (order: Record<string, any>) => {
-		if (order.paymentOption === "instant") return order.status || "NA";
-		if (order.paymentOption === "on-delivery") {
-			if (order.status === "delivered") return "Arrived";
+		if (order?.paymentOption === "instant") return order?.status || "NA";
+		if (order?.paymentOption === "on-delivery") {
+			if (order?.status === "delivered") return "Arrived";
 			if (
-				order.status &&
+				order?.status &&
 				["paid", "disputed", "cancelled", "fulfilled", "disputed"].includes(
-					order.status,
+					order?.status,
 				)
 			)
-				return order.status;
+				return order?.status;
 			return "Pay on Delivery";
 		}
 		return "NA";

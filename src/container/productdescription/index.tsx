@@ -32,6 +32,7 @@ export const ProductDescription = () => {
 	const { requireAuth } = useRequireAuth();
 
 	const [isLoading, setIsLoading] = useState(false);
+	const [cartLookupComplete, setCartLookupComplete] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [formDetails, setFormDetails] = useState({
 		cartId: null,
@@ -39,21 +40,30 @@ export const ProductDescription = () => {
 	});
 
 	useEffect(() => {
+		let cancelled = false;
 		const fetchProductInCart = async () => {
-			if (!id.trim()) return;
+			setCartLookupComplete(false);
 			try {
 				const product = await retrieveProductFromCartById(TOKEN, id);
-				console.log(product);
-				setFormDetails((prev) => ({
-					...prev,
-					cartId: product?.id ? product.id : null,
-					quantity: product?.quantity ? product.quantity.toString() : "0",
-				}));
+				if (!cancelled) {
+					setFormDetails((prev) => ({
+						...prev,
+						cartId: product?.id ?? null,
+						quantity: product?.quantity?.toString() ?? "0",
+					}));
+				}
 			} catch (error) {
-				console.error(`Error fetching product in cart`, error);
+				console.error("Error fetching product in cart", error);
+			} finally {
+				if (!cancelled) setCartLookupComplete(true);
 			}
 		};
-		fetchProductInCart();
+		if (TOKEN && id.trim()) {
+			fetchProductInCart();
+		}
+		return () => {
+			cancelled = true;
+		};
 	}, [TOKEN, id]);
 
 	const fetchProductWithCategory = async (id: string) => {
@@ -362,6 +372,7 @@ export const ProductDescription = () => {
 						</Stack>
 						<Box sx={{ display: "flex", overflow: "hidden" }}>
 							<BaseButton
+								disabled={!cartLookupComplete}
 								disableElevation
 								variant="contained"
 								onClick={(e) =>

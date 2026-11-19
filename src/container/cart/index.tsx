@@ -289,6 +289,7 @@ export const Cart = () => {
 					},
 				});
 			} else {
+				refetch();
 				await toast.success("Cart checked out successfully!");
 				navigate(`/profile/1`);
 			}
